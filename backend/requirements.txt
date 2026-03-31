@@ -1,0 +1,12 @@
+fastapi
+uvicorn
+firebase-admin
+google-genai
+pymupdf
+spacy
+python-multipart
+langchain
+langchain-core
+langchain-community
+pydantic
+python-dotenv
