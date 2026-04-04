@@ -18,17 +18,29 @@ SAFETY_SETTINGS = [
 
 
 def _extract_json(text: str):
-    """Pull the first JSON array or object out of a response that may be
-    wrapped in markdown fences or explanatory prose."""
-    m = re.search(r"```(?:json)?\s*([\s\S]*?)```", text)
-    if m:
-        return m.group(1).strip()
-    m = re.search(r"\[[\s\S]*\]", text)
-    if m:
-        return m.group(0)
-    m = re.search(r"\{[\s\S]*\}", text)
-    if m:
-        return m.group(0)
+    """Pull the first valid JSON array or object out of a Gemini response.
+
+    Uses raw_decode so it stops after the first complete JSON value and
+    ignores any trailing text / markdown that Gemini sometimes appends,
+    which would cause 'Extra data' errors with plain json.loads().
+    """
+    # 1. Strip markdown fences first
+    fenced = re.search(r"```(?:json)?\s*([\s\S]*?)```", text)
+    if fenced:
+        text = fenced.group(1).strip()
+
+    decoder = json.JSONDecoder()
+
+    # 2. Find the first [ or { and try raw_decode from there
+    for pattern in [r"\[", r"\{"]:
+        m = re.search(pattern, text)
+        if m:
+            try:
+                obj, _ = decoder.raw_decode(text, m.start())
+                return json.dumps(obj)  # return canonical JSON string
+            except json.JSONDecodeError:
+                continue
+
     return text.strip()
 
 
@@ -50,7 +62,8 @@ async def generate_interview_questions(
             "safety_settings": SAFETY_SETTINGS,
         }
     )
-    parsed = json.loads(response.text)
+    raw = _extract_json(response.text)
+    parsed = json.loads(raw)
     if not isinstance(parsed, list):
         raise ValueError("Expected a JSON array of questions")
     return parsed[:count]
@@ -74,24 +87,47 @@ async def evaluate_interview_answers(
         }
     )
 
-    raw = response.text
+    raw = _extract_json(response.text)
     print(f"DEBUG RAW EVAL (first 300 chars): {raw[:300]}")
 
     parsed = json.loads(raw)
 
     # The AI sometimes returns the result wrapped in a list — unwrap it
     if isinstance(parsed, list):
-        # Find the first dict in the list
         for item in parsed:
             if isinstance(item, dict) and "overallScore" in item:
                 parsed = item
                 break
         else:
-            # If the list contains a single dict, use it
             if len(parsed) == 1 and isinstance(parsed[0], dict):
                 parsed = parsed[0]
 
     if not isinstance(parsed, dict):
         raise ValueError(f"Expected a JSON object for evaluation, got {type(parsed).__name__}")
+
+    return parsed
+
+
+async def generate_study_resources(skills: list[str], level: str) -> list[dict]:
+    """Ask Gemini to generate personalized study resources based on skills and level."""
+    from app.ai.prompts.study_prompt import build_study_resources_prompt
+
+    prompt = build_study_resources_prompt(skills, level)
+    response = client.models.generate_content(
+        model=MODEL,
+        contents=prompt,
+        config={
+            "response_mime_type": "application/json",
+            "safety_settings": SAFETY_SETTINGS,
+        }
+    )
+
+    raw = _extract_json(response.text)
+    print(f"DEBUG RAW STUDY RESOURCES (first 300 chars): {raw[:300]}")
+
+    parsed = json.loads(raw)
+
+    if not isinstance(parsed, list):
+        raise ValueError(f"Expected a JSON array for study resources, got {type(parsed).__name__}")
 
     return parsed

@@ -1,7 +1,20 @@
+# Frontend
 node_modules/
 dist/
-.env
-.DS_Store
+.env.local
+
+# Backend
+venv/
+venv2/
 __pycache__/
 *.pyc
+.env
+
+# System
+.DS_Store
+
+# Logs
+*.log
+
+# Optional
 .gemini/
