@@ -203,7 +203,7 @@ export default function ProfilePage() {
               </div>
 
               <div className="profile-card">
-                <div className="profile-card-title">🎓Academic Background</div>
+                <div className="profile-card-title">🎓 Academic Background</div>
                 <div className="p-field">
                   <label className="p-label">Field of Study</label>
                   <input type="text" className="p-input" value={userData.fieldStudy} onChange={(e) => handleInputChange('fieldStudy', e.target.value)} placeholder="e.g. Computer Science" />
