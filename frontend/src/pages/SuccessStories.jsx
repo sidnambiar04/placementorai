@@ -124,7 +124,7 @@ export default function SuccessStories() {
         <div className="landing-footer-copy">© 2026 Placementor.ai. Fueling Career Momentum.</div>
         <div className="landing-footer-links">
           <Link to="/">Privacy Policy</Link>
-          <Link to="/">Terms of Services</Link>
+          <Link to="/">Terms of Service</Link>
           <Link to="/">Contact Us</Link>
         </div>
       </footer>
