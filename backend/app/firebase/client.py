@@ -1,7 +1,7 @@
 import firebase_admin
 from firebase_admin import credentials, firestore, auth
 import os
-from app.config import settings
+import json
 
 _initialized = False
 
@@ -10,22 +10,36 @@ def init_firebase():
     if _initialized:
         return
 
-    cred_path = settings.FIREBASE_CREDENTIALS_PATH
-    
-    if not cred_path or not os.path.exists(cred_path):
-        print("================================================================")
-        print(f"WARNING: Firebase credentials not found at '{cred_path}'.")
-        print("Backend Firebase Admin SDK is NOT initialized.")
-        print("Please download your Service Account JSON from Firebase Console")
-        print("and set FIREBASE_CREDENTIALS_PATH in your backend/.env file.")
-        print("================================================================")
-        return
-
     try:
-        cred = credentials.Certificate(cred_path)
-        firebase_admin.initialize_app(cred)
-        _initialized = True
-        print("Successfully initialized Firebase Admin SDK.")
+        # First try environment variable (for Render deployment)
+        creds_json = os.environ.get("FIREBASE_CREDENTIALS")
+        
+        if creds_json:
+            # Running on Render - read from env variable
+            creds_dict = json.loads(creds_json)
+            cred = credentials.Certificate(creds_dict)
+            firebase_admin.initialize_app(cred)
+            _initialized = True
+            print("Firebase initialized from environment variable.")
+            return
+
+        # Fallback to file path (for local development)
+        cred_path = os.environ.get("FIREBASE_CREDENTIALS_PATH")
+        
+        if cred_path and os.path.exists(cred_path):
+            cred = credentials.Certificate(cred_path)
+            firebase_admin.initialize_app(cred)
+            _initialized = True
+            print("Firebase initialized from credentials file.")
+            return
+
+        # Neither worked
+        print("================================================================")
+        print("WARNING: Firebase credentials not found.")
+        print("Set FIREBASE_CREDENTIALS (JSON string) for production")
+        print("or FIREBASE_CREDENTIALS_PATH for local development")
+        print("================================================================")
+
     except Exception as e:
         print(f"Failed to initialize Firebase Admin SDK: {e}")
 
@@ -43,5 +57,5 @@ def verify_token(token: str):
         return auth.verify_id_token(token)
     return None
 
-# Attempt to initialize on load
+# Initialize on load
 init_firebase()
