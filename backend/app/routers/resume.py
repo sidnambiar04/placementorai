@@ -101,6 +101,14 @@ async def _analyze_with_gemini(file_bytes: bytes, filename: str, content_type: s
     cleaned = _extract_json(raw)
     result = json.loads(cleaned)
     
+    # Ensure all metrics keys exist for the Spider Chart to prevent chart break
+    if "metrics" not in result or not isinstance(result["metrics"], dict):
+        result["metrics"] = {}
+    
+    for m in ["keywords", "format", "completeness", "role", "impact"]:
+        if m not in result["metrics"]:
+            result["metrics"][m] = 0
+            
     return result
 
 
@@ -138,11 +146,11 @@ def get_mock_resume_analysis(role: str):
         "potential": "Strong",
         "confidence": "HIGH",
         "metrics": {
-            "keywords": 65,
+            "keywords": 85,
             "format": 90,
             "completeness": 80,
             "role": 70,
-            "impact": 70
+            "impact": 75
         },
         "atsKillers": [
             "Missing specific tech stack keywords for this role",

@@ -16,6 +16,7 @@ class SkillGapRequest(BaseModel):
     dreamRole: str = "Software Engineer"
     experienceLevel: str = "Beginner"
     pastExperience: str = ""
+    knownSkills: list = []
     previousAnalysis: Optional[Any] = None
 
 
@@ -27,6 +28,7 @@ async def analyze_skill_gap(req: SkillGapRequest):
             dream_role=req.dreamRole,
             experience_level=req.experienceLevel,
             past_experience=req.pastExperience,
+            known_skills=req.knownSkills,
             previous_analysis=req.previousAnalysis,
         )
 

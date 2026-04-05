@@ -28,6 +28,7 @@ Respond with a single JSON object (no markdown) with this exact structure:
     "nice_to_have": ["<keyword1>", "<keyword2>"]
   }},
   "optimizedBullets": [
+    // Provide 3 to 4 high-impact fixes (IMPORTANT)
     {{
       "severity": "<HIGH|MEDIUM|LOW>",
       "label": "<section name>",

@@ -59,33 +59,75 @@ async def recommend_companies(req: RecommendRequest):
 def get_mock_company_recommendations(role: str):
     return [
         {
-            "company": "Tech Giant Corp",
-            "role": f"Senior {role}",
+            "company": "Razorpay",
+            "role": f"{role} • Bangalore / Hybrid",
             "matchScore": 95,
+            "vacancies": 8,
+            "salaryRange": "₹22L – ₹38L",
+            "requiredSkills": ["React", "Node.js", "Redis", "PostgreSQL"],
+            "reason": "Top local fintech with a strong engineering culture and active hiring for your role.",
+            "applicationUrl": "https://razorpay.com/jobs/",
+            "matchedSkills": ["React", "Node.js"],
+            "missingSkills": ["Redis", "PostgreSQL"]
+        },
+        {
+            "company": "Swiggy",
+            "role": f"{role} • Remote / Hybrid",
+            "matchScore": 92,
             "vacancies": 12,
-            "reason": "Perfect match for your expertise in distributed systems and React.",
-            "applicationUrl": "https://www.google.com/about/careers/applications/",
-            "matchedSkills": ["React", "System Design"],
-            "missingSkills": ["Go", "Kubernetes"]
+            "salaryRange": "₹18L – ₹32L",
+            "requiredSkills": ["React", "Node.js", "Redis", "Docker"],
+            "reason": "Hyper-growth consumer tech company with complex scalability challenges and great culture.",
+            "applicationUrl": "https://careers.swiggy.com/",
+            "matchedSkills": ["React", "Node.js"],
+            "missingSkills": ["Redis", "Docker"]
         },
         {
-            "company": "Fast Startup",
-            "role": f"Lead {role}",
-            "matchScore": 88,
-            "vacancies": 3,
-            "reason": "They are looking for someone with your specific experience in scaling microservices.",
-            "applicationUrl": "https://www.ycombinator.com/jobs",
-            "matchedSkills": ["Node.js", "Docker"],
-            "missingSkills": ["AWS", "Redis"]
+            "company": "CRED",
+            "role": f"{role} • Bangalore",
+            "matchScore": 89,
+            "vacancies": 5,
+            "salaryRange": "₹25L – ₹45L",
+            "requiredSkills": ["React Native", "TypeScript", "Node.js", "System Design"],
+            "reason": "CRED is highly selective and ideal for developers focusing on premium UI/UX and backend efficiency.",
+            "applicationUrl": "https://careers.cred.club/",
+            "matchedSkills": ["TypeScript", "Node.js"],
+            "missingSkills": ["React Native", "System Design"]
         },
         {
-            "company": "Global Solutions",
-            "role": role,
-            "matchScore": 82,
-            "vacancies": 25,
-            "reason": "Good entry point for large scale enterprise applications.",
-            "applicationUrl": "https://www.accenture.com/us-en/careers",
-            "matchedSkills": ["JavaScript", "HTML/CSS"],
-            "missingSkills": ["SQL", "Java"]
+            "company": "Zomato",
+            "role": f"{role} • Gurgaon / Remote",
+            "matchScore": 87,
+            "vacancies": 7,
+            "salaryRange": "₹15L – ₹28L",
+            "requiredSkills": ["React", "Node.js", "GraphQL", "AWS"],
+            "reason": "Prominent food-tech brand with high-scale real-time tracking and logistics complexity.",
+            "applicationUrl": "https://www.zomato.com/careers",
+            "matchedSkills": ["React", "Node.js"],
+            "missingSkills": ["GraphQL", "AWS"]
+        },
+        {
+            "company": "Groww",
+            "role": f"{role} • Bangalore",
+            "matchScore": 85,
+            "vacancies": 6,
+            "salaryRange": "₹20L – ₹32L",
+            "requiredSkills": ["React", "Go", "Kubernetes", "PostgreSQL"],
+            "reason": "One of the fastest-growing investment platforms needing strong engineering for reliable financial systems.",
+            "applicationUrl": "https://groww.in/careers",
+            "matchedSkills": ["React"],
+            "missingSkills": ["Go", "Kubernetes", "PostgreSQL"]
+        },
+        {
+            "company": "Meesho",
+            "role": f"{role} • Remote",
+            "matchScore": 83,
+            "vacancies": 10,
+            "salaryRange": "₹18L – ₹30L",
+            "requiredSkills": ["Java", "React", "Spring Boot", "MySQL"],
+            "reason": "Major e-commerce success story focusing on social commerce and large-scale backend systems.",
+            "applicationUrl": "https://meesho.io/careers",
+            "matchedSkills": ["React"],
+            "missingSkills": ["Java", "Spring Boot", "MySQL"]
         }
     ]

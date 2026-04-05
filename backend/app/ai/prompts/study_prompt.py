@@ -1,42 +1,37 @@
-def build_study_resources_prompt(skills: list[str], level: str) -> str:
-    skills_str = ", ".join(skills) if skills else "General programming fundamentals"
-    return f"""You are an expert study resource curator for any technical or non-technical domain.
-Generate personalized study resource cards for a {level}-level learner.
+def build_study_resources_prompt(role: str, level: str, topic: str = None) -> str:
+    return f"""You are an expert study resource curator. 
+The user is a {level}-level {role}.
+{f"They specifically want to learn about: {topic}." if topic else "Recommend the 3 most important topics they should study now to advance their career."}
 
-Topics/Skills to cover: {skills_str}
+Return a JSON object (no markdown, no backticks) in exactly this structure:
+{{
+  "topics": [
+    {{
+      "topic": "Topic Name",
+      "tag": "RECOMMENDED FOR YOU",
+      "videos": [
+        {{"title": "Specific Accurate Title 1", "meta": "Channel · Duration", "url": "https://www.youtube.com/results?search_query=topic+tutorial+1"}},
+        {{"title": "Highly Relevant Guide 2", "meta": "Channel · Duration", "url": "https://www.youtube.com/results?search_query=topic+deep+dive"}}
+      ],
+      "notes": [
+        {{"title": "Official Technical Doc 1", "meta": "Source e.g. MDN", "url": "https://developer.mozilla.org/..."}},
+        {{"title": "In-depth Deep Dive 2", "meta": "Source Guide", "url": "https://www.freecodecamp.org/..."}}
+      ],
+      "projects": [
+        {{"title": "Real-world Project 1", "meta": "Est. 5h", "url": "https://github.com/search?q=topic+projects"}},
+        {{"title": "Architecture Starter 2", "meta": "Est. 12h", "url": "https://github.com/search?q=topic+starter+kit"}}
+      ]
+    }}
+  ]
+}}
 
-Return a JSON array of exactly {len(skills) if len(skills) <= 6 else 4} resource cards — one per skill if 6 or fewer, otherwise pick the 4 most important.
-
-Return ONLY a valid JSON array, no markdown, no extra text:
-[
-  {{
-    "skill": "<exact skill/topic name>",
-    "priority": "RECOMMENDED FOR YOU",
-    "difficulty": "{level}",
-    "isMissing": true,
-    "iconBg": "#FFF4EC",
-    "iconText": "<2-3 letter abbreviation>",
-    "videos": [
-      "<Specific YouTube tutorial title by a known creator e.g. Traversy Media, Fireship, CS50>",
-      "<Specific YouTube course/playlist title>",
-      "<Another video title>"
-    ],
-    "notes": [
-      "<Specific documentation/article name e.g. MDN Web Docs: Array Methods, freeCodeCamp: Python Guide>",
-      "<GeeksforGeeks / official docs article title>",
-      "<freeCodeCamp tutorial or blog post title>"
-    ],
-    "practice": [
-      "<Specific LeetCode problem or HackerRank challenge title>",
-      "<Mini project idea e.g. Build a Todo App with React>",
-      "<Coding exercise or kata on CodePen/GitHub>"
-    ]
-  }}
-]
+{f"Return exactly 1 topic (the requested topic)." if topic else "Return exactly 3 highly accurate topics."}
+IMPORTANT: For each topic, you MUST provide exactly 2 videos, 2 notes, and 2 projects.
+Content MUST be strictly relevant for a {level}-level {role} on the topic "{topic}". Avoid generic titles.
 
 Rules:
-- Accept ANY domain topic: web dev, machine learning, DSA, databases, cloud, mobile, design, finance, etc.
-- Use REAL resource names that actually exist on YouTube/freeCodeCamp/LeetCode
-- Keep all titles concise and specific (not generic like "Watch YouTube videos")
-- Return ONLY the JSON array, absolutely nothing else before or after it.
+- Provide REAL, high-quality resource names.
+- Provide direct, functional URLs to the actual resource or a highly specific search results page.
+- Tags should be one of: "RECOMMENDED FOR YOU", "HIGH PRIORITY", "BEGINNER FRIENDLY", "SKILL GAP".
+- Return ONLY the JSON object, absolutely nothing else.
 """

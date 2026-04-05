@@ -7,8 +7,9 @@ from app.ai.gemini_client import generate_study_resources
 router = APIRouter()
 
 class GenerateResourcesRequest(BaseModel):
-    skills: List[str]
+    role: str
     level: str
+    topic: Optional[str] = None
 
 @router.get("/")
 async def health():
@@ -16,17 +17,19 @@ async def health():
 
 @router.post("/generate")
 async def generate_resources(body: GenerateResourcesRequest):
-    """Generate 4 personalized study resource cards based on skill gaps."""
+    """Generate personalized study resource cards."""
     try:
         resources = await generate_study_resources(
-            skills=body.skills,
+            role=body.role,
             level=body.level,
+            topic=body.topic
         )
         return {
-            "resources": resources,
+            "topics": resources,
             "metadata": {
-                "skills_processed": body.skills,
+                "role": body.role,
                 "level": body.level,
+                "topic": body.topic,
                 "count": len(resources),
             },
         }
@@ -35,34 +38,29 @@ async def generate_resources(body: GenerateResourcesRequest):
         if "429" in str(e) or "RESOURCE_EXHAUSTED" in str(e):
             print("FALLBACK: Using mock data for study resources due to quota limit.")
             return {
-                "resources": get_mock_study_resources(body.skills, body.level),
+                "topics": get_mock_study_resources(body.role, body.level, body.topic),
                 "is_mock": True
             }
         raise HTTPException(status_code=500, detail=str(e))
 
 
-def get_mock_study_resources(skills: List[str], level: str):
+def get_mock_study_resources(role: str, level: str, topic: str = None):
+    target_topic = topic if topic else f"{role} Fundamentals"
     return [
         {
-            "id": "mock-1",
-            "skill": skills[0] if skills else "General CS",
-            "priority": "RECOMMENDED",
-            "difficulty": level,
-            "isMissing": True,
-            "iconText": "CS",
-            "videos": ["Modern Computer Science Intro", "Computer Architecture Essentials"],
-            "notes": ["CS101 Guide - freeCodeCamp", "Harvard CS50 Notes"],
-            "practice": ["Binary Search Practice - LeetCode", "Build a Simple Calculator"]
-        },
-        {
-            "id": "mock-2",
-            "skill": "System Design",
-            "priority": "HIGH",
-            "difficulty": "Intermediate",
-            "isMissing": True,
-            "iconText": "SD",
-            "videos": ["System Design for Beginners", "Scaling 101"],
-            "notes": ["System Design Primer", "Microservices Guide"],
-            "practice": ["Design a URL Shortener", "Load Balancing Exercise"]
+            "topic": target_topic,
+            "tag": "RECOMMENDED FOR YOU",
+            "videos": [
+                {"title": f"Complete {target_topic} Mastery", "meta": "YouTube · 32m", "url": "https://www.youtube.com/results?search_query=" + target_topic.replace(' ', '+')},
+                {"title": f"{target_topic} Crash Course", "meta": "YouTube · 1h 15m", "url": "https://www.youtube.com/results?search_query=" + target_topic.replace(' ', '+') + "+course"}
+            ],
+            "notes": [
+                {"title": f"{target_topic} Official Guide", "meta": "MDN Web Docs", "url": "https://developer.mozilla.org/en-US/search?q=" + target_topic.replace(' ', '+')},
+                {"title": f"{target_topic} Cheat Sheet", "meta": "DevHints.io", "url": "https://devhints.io/?q=" + target_topic.replace(' ', '+')}
+            ],
+            "projects": [
+                {"title": f"Build a {target_topic} Dashboard", "meta": "Est. 4h", "url": "https://github.com/search?q=" + target_topic.replace(' ', '+') + "+project"},
+                {"title": f"{target_topic} Enterprise Starter", "meta": "Est. 10h", "url": "https://github.com/search?q=" + target_topic.replace(' ', '+') + "+starter"}
+            ]
         }
     ]

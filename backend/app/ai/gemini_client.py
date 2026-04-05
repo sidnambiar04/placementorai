@@ -32,15 +32,21 @@ def _extract_json(text: str):
     decoder = json.JSONDecoder()
 
     # 2. Find the first [ or { and try raw_decode from there
-    for pattern in [r"\[", r"\{"]:
+    for pattern in [r"\{", r"\["]:
         m = re.search(pattern, text)
         if m:
             try:
                 obj, _ = decoder.raw_decode(text, m.start())
-                return json.dumps(obj)  # return canonical JSON string
+                # If it's a list, look for the first dictionary inside (Gemini fallback)
+                if isinstance(obj, list):
+                    for item in obj:
+                        if isinstance(item, dict):
+                            return json.dumps(item)
+                return json.dumps(obj)
             except json.JSONDecodeError:
                 continue
 
+    print(f"CRITICAL: Failed to extract JSON from raw text: {text[:500]}...")
     return text.strip()
 
 
@@ -108,11 +114,11 @@ async def evaluate_interview_answers(
     return parsed
 
 
-async def generate_study_resources(skills: list[str], level: str) -> list[dict]:
-    """Ask Gemini to generate personalized study resources based on skills and level."""
+async def generate_study_resources(role: str, level: str, topic: str = None) -> list[dict]:
+    """Ask Gemini to generate personalized study resources based on role, level, and topic."""
     from app.ai.prompts.study_prompt import build_study_resources_prompt
 
-    prompt = build_study_resources_prompt(skills, level)
+    prompt = build_study_resources_prompt(role, level, topic)
     response = client.models.generate_content(
         model=MODEL,
         contents=prompt,
@@ -127,7 +133,7 @@ async def generate_study_resources(skills: list[str], level: str) -> list[dict]:
 
     parsed = json.loads(raw)
 
-    if not isinstance(parsed, list):
-        raise ValueError(f"Expected a JSON array for study resources, got {type(parsed).__name__}")
+    if not isinstance(parsed, dict) or "topics" not in parsed:
+        raise ValueError(f"Expected a JSON object with 'topics' key for study resources, got {type(parsed).__name__}")
 
-    return parsed
+    return parsed["topics"]
