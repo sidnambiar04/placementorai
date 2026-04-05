@@ -43,15 +43,19 @@ Unlike generic job boards or static learning aggregators, Placementor.ai provide
     *   **Description:** A core feature powered by the Gemini AI API integration. Users can engage in simulated interview sessions tailored to their target roles. The system presents dynamic questions, captures user inputs, and provides instant, constructive feedback on their answers to help them improve their communication and technical articulation.
     *   **Output Screenshot:** ![AI Mock Interview](placeholder-for-interview-screenshot.png)
 
-*   **Feature 2: Skill Gap Analysis & Resume Audit**
-    *   **Description:** Users can input their current resume and their desired job role. The platform evaluates the resume against industry standards for that role, highlighting quantitative skill gaps and missing competencies. 
-    *   **Output Screenshot:** ![Skill Gap Analysis](placeholder-for-skillgap-screenshot.png)
+*   **Feature 2: AI-Powered Resume Evaluation**
+    *   **Description:** Powered by advanced natural language processing, this feature comprehensively analyzes a user's uploaded resume against their target job description. It yields a detailed breakdown of matching keywords, calculates a match score, and specifically isolates the missing technical competencies creating a skill gap.
+    *   **Output Screenshot:** ![Resume Evaluation](placeholder-for-resume-eval-screenshot.png)
 
 *   **Feature 3: AI Study Resource Recommender**
-    *   **Description:** Directly connected to the Skill Gap Analysis, this feature dynamically generates curated, personalized learning materials and resources (articles, courses, documentation) tailored to the specific skills the user lacks. Resource data is persistently stored in Firebase Firestore for easy retrieval and management.
+    *   **Description:** Directly connected to the Resume Evaluation, this feature dynamically generates curated, personalized learning materials and resources (articles, courses, documentation) tailored to the specific skills the user lacks. Resource data is persistently stored in Firebase Firestore for easy retrieval and management.
     *   **Output Screenshot:** ![Resource Recommender](placeholder-for-resources-screenshot.png)
 
-*   **Feature 4: High-Fidelity Data-Driven Dashboard**
+*   **Feature 4: Dynamic Career Roadmap**
+    *   **Description:** Synthesizing the data from the resume evaluation, this feature automatically constructs an actionable, step-by-step career progression plan. It visualizes short-term and long-term learning milestones, dynamically suggesting the optimal chronological order in which new skills should be acquired to secure the target role.
+    *   **Output Screenshot:** ![Career Roadmap](placeholder-for-roadmap-screenshot.png)
+
+*   **Feature 5: High-Fidelity Data-Driven Dashboard**
     *   **Description:** A premium, fully responsive web interface built with React, Vite, and modern CSS methodologies. It features a dark-themed resume evaluation banner, a live tech news ticker, and a personalized 3x2 grid of recommended actions, providing a centralized hub for the user's career journey.
     *   **Output Screenshot:** ![Dashboard](placeholder-for-dashboard-screenshot.png)
 
