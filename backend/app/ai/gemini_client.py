@@ -137,3 +137,90 @@ async def generate_study_resources(role: str, level: str, topic: str = None) -> 
         raise ValueError(f"Expected a JSON object with 'topics' key for study resources, got {type(parsed).__name__}")
 
     return parsed["topics"]
+
+
+async def generate_mock_interview_questions() -> list[dict]:
+    """Generate exactly 10 placement mock interview questions (6 MCQ + 4 text)."""
+    from app.ai.prompts.mock_interview_prompt import build_mock_interview_generation_prompt
+
+    response = client.models.generate_content(
+        model=MODEL,
+        contents=build_mock_interview_generation_prompt(),
+        config={
+            "response_mime_type": "application/json",
+            "safety_settings": SAFETY_SETTINGS,
+        }
+    )
+    raw = _extract_json(response.text)
+    parsed = json.loads(raw)
+
+    if not isinstance(parsed, list):
+        raise ValueError("Expected a JSON array for mock interview questions")
+
+    return parsed[:10]
+
+
+async def evaluate_mock_interview(
+    questions: list[dict],
+    answers: dict,
+    mcq_score: int,
+    mcq_total: int,
+) -> dict:
+    """Evaluate written answers and provide full interview feedback."""
+    from app.ai.prompts.mock_interview_prompt import build_mock_interview_evaluation_prompt
+
+    prompt = build_mock_interview_evaluation_prompt(
+        questions=questions,
+        answers=answers,
+        mcq_score=mcq_score,
+        mcq_total=mcq_total,
+    )
+    response = client.models.generate_content(
+        model=MODEL,
+        contents=prompt,
+        config={
+            "response_mime_type": "application/json",
+            "safety_settings": SAFETY_SETTINGS,
+        }
+    )
+
+    raw = _extract_json(response.text)
+    parsed = json.loads(raw)
+
+    if not isinstance(parsed, dict):
+        raise ValueError("Expected a JSON object for mock interview evaluation")
+
+    return parsed
+
+
+async def generate_career_roadmap(
+    current_role: str,
+    target_role: str,
+    skills: str,
+    timeline: str,
+    weak_areas: str = "",
+) -> dict:
+    """Generate a structured career roadmap with phases and milestones."""
+    from app.ai.prompts.career_roadmap_prompt import build_career_roadmap_prompt
+
+    prompt = build_career_roadmap_prompt(
+        current_role=current_role,
+        target_role=target_role,
+        skills=skills,
+        timeline=timeline,
+        weak_areas=weak_areas,
+    )
+    response = client.models.generate_content(
+        model=MODEL,
+        contents=prompt,
+        config={
+            "response_mime_type": "application/json",
+            "safety_settings": SAFETY_SETTINGS,
+        }
+    )
+
+    raw = _extract_json(response.text)
+    parsed = json.loads(raw)
+    if not isinstance(parsed, dict):
+        raise ValueError("Expected a JSON object for career roadmap")
+    return parsed

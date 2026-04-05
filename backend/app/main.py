@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routers import auth, resume, interview, evaluation, skill_gap, roadmap, dashboard, study_resources, recommendations
+from app.routers import auth, resume, interview, evaluation, skill_gap, roadmap, dashboard, study_resources, recommendations, mock_interview
 
 app = FastAPI(title="Placement Companion API", version="1.0.0")
 
@@ -21,6 +21,7 @@ app.include_router(roadmap.router, prefix="/api/v1/roadmap", tags=["roadmap"])
 app.include_router(dashboard.router, prefix="/api/v1/dashboard", tags=["dashboard"])
 app.include_router(study_resources.router, prefix="/api/v1/study-resources", tags=["study_resources"])
 app.include_router(recommendations.router, prefix="/api", tags=["recommendations"])
+app.include_router(mock_interview.router, prefix="/api/v1/mock-interview", tags=["mock_interview"])
 
 @app.get("/health")
 async def health_check():

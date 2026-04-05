@@ -51,6 +51,13 @@ export default function Sidebar({ userData }) {
           Skill Gap Analysis
         </NavLink>
 
+        <NavLink to="/mock-interview" className={({isActive}) => `s-item ${isActive ? 'active' : ''}`} onMouseMove={handleMouseMove}>
+          <span className="s-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 9 9"/><polyline points="12 7 12 12 15 14"/><path d="M19 3v5h-5"/></svg>
+          </span>
+          Mock Interview
+        </NavLink>
+
         <NavLink to="/recommendations" className={({isActive}) => `s-item ${isActive ? 'active' : ''}`} onMouseMove={handleMouseMove}>
           <span className="s-icon">
             <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
@@ -58,7 +65,7 @@ export default function Sidebar({ userData }) {
           Job Opportunities
         </NavLink>
 
-        <NavLink to="/roadmap" className={({isActive}) => `s-item ${isActive ? 'active' : ''}`} onMouseMove={handleMouseMove}>
+        <NavLink to="/career-roadmap" className={({isActive}) => `s-item ${isActive ? 'active' : ''}`} onMouseMove={handleMouseMove}>
           <span className="s-icon">
             <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
           </span>

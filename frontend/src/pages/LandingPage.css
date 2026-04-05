@@ -709,9 +709,128 @@
 
 /* ══ FOOTER ══ */
 .landing-footer {
-  background: white;
-  border-top: 1px solid var(--border);
-  padding: 28px 6%;
+  background:
+    radial-gradient(1200px 260px at 12% 0%, rgba(217, 95, 0, 0.09), transparent 60%),
+    radial-gradient(900px 220px at 88% 0%, rgba(194, 103, 58, 0.08), transparent 60%),
+    linear-gradient(180deg, #fff8f3 0%, #f9f0e8 100%);
+  border-top: 1px solid #ecd9c7;
+  padding: 48px 6% 20px;
+  position: relative;
+}
+
+.landing-footer::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #f0c59f 20%, #e49352 50%, #f0c59f 80%, transparent);
+}
+
+.landing-footer-top {
+  margin: 0 auto 22px;
+  max-width: 1200px;
+  display: grid;
+  grid-template-columns: minmax(280px, 1fr);
+  gap: 16px;
+}
+
+.landing-footer-top h3 {
+  color: #8a684d;
+  letter-spacing: 0.12em;
+  font-size: 0.78rem;
+  font-weight: 800;
+  margin-bottom: 0;
+  text-transform: uppercase;
+  width: fit-content;
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: #fff5ec;
+  border: 1px solid #efdbc9;
+}
+
+.landing-footer-dev-card {
+  border: 1px solid #ead5c3;
+  background: linear-gradient(145deg, #fffdfa, #fff6ef);
+  border-radius: 24px;
+  padding: 26px 26px;
+  max-width: 720px;
+  box-shadow: 0 16px 34px rgba(168, 101, 52, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.landing-footer-dev-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 24px;
+  padding: 1px;
+  background: linear-gradient(120deg, rgba(217, 95, 0, 0.35), rgba(236, 183, 138, 0.25), rgba(217, 95, 0, 0.3));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.landing-footer-dev-card::after {
+  content: '';
+  position: absolute;
+  right: -38px;
+  top: -46px;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(217, 95, 0, 0.14), rgba(217, 95, 0, 0));
+  pointer-events: none;
+}
+
+.landing-footer-dev-card p {
+  color: #7f6653;
+  font-size: 0.96rem;
+  line-height: 1.75;
+  margin-bottom: 14px;
+  max-width: 54ch;
+}
+
+.landing-footer-dev-card h4 {
+  color: #1a1108;
+  font-size: clamp(1.3rem, 2vw, 1.7rem);
+  line-height: 1.2;
+  margin-bottom: 18px;
+  font-weight: 800;
+}
+
+.landing-footer-dev-card a {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: #fff;
+  font-weight: 800;
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  text-transform: uppercase;
+  background: linear-gradient(135deg, #d95f00, #bb4d00);
+  border-radius: 999px;
+  padding: 11px 16px;
+  box-shadow: 0 10px 24px rgba(187, 77, 0, 0.26);
+}
+
+.landing-footer-dev-card a:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 28px rgba(187, 77, 0, 0.35);
+}
+
+.landing-footer-bottom {
+  border: 1px solid #ead7c7;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 16px;
+  padding: 16px 18px;
+  max-width: 1200px;
+  margin: 0 auto;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -733,25 +852,29 @@
 }
 
 .landing-footer-copy {
-  font-size: 0.75rem;
-  color: var(--muted);
-  margin-top: 3px;
+  font-size: 0.78rem;
+  color: #8c7b6e;
+  margin-top: 4px;
 }
 
 .landing-footer-links {
   display: flex;
-  gap: 24px;
+  gap: 16px;
+  align-items: center;
 }
 
 .landing-footer-links a {
   font-size: 0.8rem;
-  color: var(--muted);
+  color: #8c7b6e;
   text-decoration: none;
-  transition: color 0.18s;
+  transition: color 0.18s, background 0.18s;
+  padding: 6px 10px;
+  border-radius: 8px;
 }
 
 .landing-footer-links a:hover {
-  color: var(--orange);
+  color: #b14b00;
+  background: #fff3e8;
 }
 
 /* ══ SCROLL REVEAL ══ */
@@ -799,5 +922,37 @@
 
   .landing-cta-box {
     padding: 40px 24px;
+  }
+
+  .landing-footer-top h3 {
+    font-size: 0.74rem;
+  }
+
+  .landing-footer-dev-card {
+    padding: 18px 16px;
+    border-radius: 18px;
+  }
+
+  .landing-footer-dev-card p {
+    font-size: 0.88rem;
+  }
+
+  .landing-footer-dev-card h4 {
+    font-size: 1.2rem;
+  }
+
+  .landing-footer-dev-card a {
+    font-size: 0.75rem;
+    padding: 10px 13px;
+  }
+
+  .landing-footer-links {
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .landing-footer-bottom {
+    border-radius: 12px;
+    padding: 14px;
   }
 }

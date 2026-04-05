@@ -13,6 +13,8 @@ import OnboardingPage from './pages/OnboardingPage';
 import SettingsPage from './pages/SettingsPage';
 import SuccessStories from './pages/SuccessStories';
 import PartnersPage from './pages/PartnersPage';
+import MockInterviewPage from './pages/MockInterviewPage';
+import CareerRoadmapPage from './pages/CareerRoadmapPage';
 import './App.css';
 
 function App() {
@@ -33,6 +35,9 @@ function App() {
         <Route path="/settings" element={<SettingsPage />} />
         <Route path="/success-stories" element={<SuccessStories />} />
         <Route path="/partners" element={<PartnersPage />} />
+        <Route path="/mock-interview" element={<MockInterviewPage />} />
+        <Route path="/career-roadmap" element={<CareerRoadmapPage />} />
+        <Route path="/roadmap" element={<CareerRoadmapPage />} />
       </Routes>
     </Router>
   );

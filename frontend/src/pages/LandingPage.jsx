@@ -193,17 +193,30 @@ export default function LandingPage() {
 
       {/* ══ FOOTER ══ */}
       <footer className="landing-footer">
-        <div>
-          <div className="landing-footer-brand" style={{ fontWeight: '800', fontFamily: 'Plus Jakarta Sans', fontSize: '1.2rem' }}>
-            <span className="place" style={{ color: '#1a1108' }}>Place</span><span className="mentor" style={{ color: '#f15a22' }}>mentor.ai</span>
+        <div className="landing-footer-top">
+          <h3>DEVELOPMENT</h3>
+          <div className="landing-footer-dev-card">
+            <p>Developed as part of academic learning and exploration at:</p>
+            <h4>Pillai College of Engineering (PCE)</h4>
+            <a href="https://www.pce.ac.in" target="_blank" rel="noreferrer">
+              VISIT WEBSITE <span>→</span>
+            </a>
           </div>
-          <div className="landing-footer-copy">© 2026 Placementor.ai. All rights reserved.</div>
         </div>
-        <div className="landing-footer-links">
-          <Link to="/">Privacy Policy</Link>
-          <Link to="/">Terms of Service</Link>
-          <Link to="/">Contact Us</Link>
-          <Link to="/">Careers</Link>
+
+        <div className="landing-footer-bottom">
+          <div>
+            <div className="landing-footer-brand" style={{ fontWeight: '800', fontFamily: 'Plus Jakarta Sans', fontSize: '1.2rem' }}>
+              <span className="place" style={{ color: '#1a1108' }}>Place</span><span className="mentor" style={{ color: '#f15a22' }}>mentor.ai</span>
+            </div>
+            <div className="landing-footer-copy">© 2026 Placementor.ai. All rights reserved.</div>
+          </div>
+          <div className="landing-footer-links">
+            <Link to="/">Privacy Policy</Link>
+            <Link to="/">Terms of Service</Link>
+            <Link to="/">Contact Us</Link>
+            <Link to="/">Careers</Link>
+          </div>
         </div>
       </footer>
     </div>
