@@ -203,7 +203,7 @@ export default function LandingPage() {
           <Link to="/">Privacy Policy</Link>
           <Link to="/">Terms of Service</Link>
           <Link to="/">Contact Us</Link>
-          <Link to="/">Career</Link>
+          <Link to="/">Careers</Link>
         </div>
       </footer>
     </div>
