@@ -133,7 +133,7 @@ export default function CompanyRecommendations() {
             <>
               <div className="rc-controls">
                 <div className="rc-filters">
-                  <span>Role: <strong>{userData.dreamRole}</strong></span>
+                  <span>Role : <strong>{userData.dreamRole}</strong></span>
                   <span className="rc-sep">·</span>
                   <span>Level: <strong>{userData.expLevel}</strong></span>
                 </div>
