@@ -342,7 +342,7 @@ export default function DashboardPage() {
             <div className="motive-card">
               <div className="motive-icon">🎯</div>
               <div>
-                <div className="motive-title">Practice daily for best results</div>
+                <div className="motive-title">Practice daily for best results!</div>
                 <div className="motive-desc">
                   The AI adapts to your progress. Regular use ensures the mock interviews stay challenging and relevant.
                 </div>
