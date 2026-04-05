@@ -11,6 +11,9 @@
 **Project Overview:** 
 Placementor.ai is an intelligent, AI-driven platform designed to bridge the gap between academic learning and industry expectations. The problem it addresses is the lack of personalized career guidance and practical interview experience for students and job seekers. The purpose of Placementor.ai is to empower users by providing tailored skill gap analyses, automated resume evaluations, and realistic AI mock interview simulations, ultimately enhancing their employability and readiness for the job market.
 
+**Proposed Solution:**
+Unlike generic job boards or static learning aggregators, Placementor.ai provides an end-to-end, personalized ecosystem. By analyzing a user's current resume against the specific requirements of their target role, the platform constructs a customized roadmap. It solves the employability problem by not just identifying the precise technical gaps, but dynamically sourcing curated study materials to bridge those gaps, and finally offering a realistic, AI-moderated interview simulation to practice their skills in a pressure-free environment.
+
 **Team Members & Contributions:**
 *   **Sidharth Nambiar** – Full Stack Development, UI/UX Integration, AI Integrations
 *   **[Name 2]** – [Insert Contribution - e.g., Backend Architecture / Database Management]
@@ -19,6 +22,16 @@ Placementor.ai is an intelligent, AI-driven platform designed to bridge the gap 
 ---
 
 ## III. Technical Details
+
+**Innovation and Unique Functionality:**
+*   **Dynamic Contextualization:** Instead of relying on static question banks, the platform generates interview questions and study resources dynamically, tailored specifically to the intersection of the user's uploaded resume and their target job description.
+*   **Actionable AI Feedback Loop:** Beyond simply scoring an interview, the system provides granular, sentence-level feedback on the user's specific answers using advanced LLMs—explaining *why* an answer succeeded or where it fell short in technical depth.
+*   **Enterprise-Grade Experience:** A strong focus on rendering a premium, high-fidelity dark-themed UX/UI that rivals professional SaaS products, seamlessly integrating complex AI operations while maintaining an intuitive user flow.
+
+**Tech Stack:**
+*   **Frontend Ecosystem:** React (Vite) for a fast, responsive Single Page Application (SPA), styled with modular, responsive CSS methodologies.
+*   **Backend & Cloud Services:** Firebase Authentication for secure user access, paired with Firestore (NoSQL) for robust, real-time data persistence (storing user profiles, generated resources, and interview history).
+*   **AI Engine:** Google's Gemini API integrated to handle complex unstructured data processing, including resume parsing, logical gap analysis, and natural language feedback generation.
 
 **Process Flow Diagram:** 
 *(Add your system architecture or process flow diagram image here)*
