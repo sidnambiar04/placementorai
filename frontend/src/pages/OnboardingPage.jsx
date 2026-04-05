@@ -446,7 +446,7 @@ export default function OnboardingPage() {
           </div>
 
           <footer className="onboarding-footer">
-            <span>© 2025 PLACEMENTOR.AI.</span>
+            <span>© 2026 PLACEMENTOR.AI.</span>
             <div className="footer-links">
               <Link to="#">Privacy Policy</Link>
               <Link to="#">Terms of Service</Link>
