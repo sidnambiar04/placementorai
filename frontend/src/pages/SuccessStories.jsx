@@ -121,7 +121,7 @@ export default function SuccessStories() {
         <div className="landing-footer-brand" style={{ fontWeight: '800', fontFamily: 'Plus Jakarta Sans', fontSize: '1.2rem' }}>
           <span className="place" style={{ color: '#1a1108' }}>Place</span><span className="mentor" style={{ color: '#f15a22' }}>mentor.ai</span>
         </div>
-        <div className="landing-footer-copy">© 2026  Placementor.ai. Fueling Career Momentum.</div>
+        <div className="landing-footer-copy">© 2026 Placementor.ai. Fueling Career Momentum.</div>
         <div className="landing-footer-links">
           <Link to="/">Privacy Policy</Link>
           <Link to="/">Terms of Service</Link>
