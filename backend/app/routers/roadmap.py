@@ -41,54 +41,71 @@ async def generate_roadmap(body: GenerateRoadmapRequest):
 
 def get_mock_career_roadmap(target_role: str, timeline: str):
     return {
-        "target_role": target_role,
-        "timeline": timeline,
-        "summary": f"Your personalized {timeline} roadmap to become a {target_role}. This is a sample roadmap based on the role requirements.",
+        "summary": f"Your personalized {timeline} roadmap to become a {target_role}. Focus on consistent practice and building real-world projects.",
         "phases": [
             {
-                "phase": 1,
-                "name": "Foundation & Core Skills",
-                "duration": "Month 1-2",
-                "focus": "DSA, System Design, Fundamentals",
-                "milestones": [
-                    {"milestone": "Master Arrays & Linked Lists", "duration": "Week 1-2"},
-                    {"milestone": "Learn Trees & Graphs", "duration": "Week 3-4"},
-                    {"milestone": "Practice 20+ problems", "duration": "Week 5-8"}
+                "title": "Foundation & Core Skills",
+                "duration": f"{timeline} - Phase 1",
+                "goals": [
+                    "Master fundamental data structures and algorithms",
+                    "Build strong problem-solving skills",
+                    "Learn system design basics"
                 ],
-                "resources": ["LeetCode", "GeeksforGeeks", "YouTube tutorials"],
-                "skills": ["Data Structures", "Algorithms", "Problem Solving"]
+                "resources": [
+                    {"title": "LeetCode", "url": "https://leetcode.com"},
+                    {"title": "GeeksforGeeks DSA", "url": "https://www.geeksforgeeks.org/data-structures/"},
+                    {"title": "YouTube DSA Playlist", "url": "https://www.youtube.com/results?search_query=dsa+tutorial"}
+                ],
+                "milestones": [
+                    "Complete 30+ DSA problems",
+                    "Understand Time & Space complexity",
+                    "Build first portfolio project"
+                ]
             },
             {
-                "phase": 2,
-                "name": "Advanced Concepts & Projects",
-                "duration": "Month 3-4",
-                "focus": "OOP, Design Patterns, Real-world Applications",
-                "milestones": [
-                    {"milestone": "Build 2-3 projects", "duration": "Week 9-12"},
-                    {"milestone": "Learn design patterns", "duration": "Week 13-14"},
-                    {"milestone": "Contribute to open source", "duration": "Week 15-16"}
+                "title": "Advanced Concepts & Projects",
+                "duration": f"{timeline} - Phase 2",
+                "goals": [
+                    "Master advanced algorithm patterns",
+                    "Build 2-3 production-ready projects",
+                    "Learn system design patterns"
                 ],
-                "resources": ["GitHub", "MDN", "Dev communities"],
-                "skills": ["OOP Design", "System Architecture", "Collaboration"]
+                "resources": [
+                    {"title": "System Design Primer", "url": "https://github.com/donnemartin/system-design-primer"},
+                    {"title": "GitHub Awesome Lists", "url": "https://github.com/topics/awesome"},
+                    {"title": "Design Patterns Course", "url": "https://www.coursera.org"}
+                ],
+                "milestones": [
+                    "Complete system design questions",
+                    "Push 2-3 projects to GitHub",
+                    "Write technical blog posts"
+                ]
             },
             {
-                "phase": 3,
-                "name": "Interview Prep & Polishing",
-                "duration": "Month 5-6",
-                "focus": "Behavioral, Technical, Company-specific",
-                "milestones": [
-                    {"milestone": "Mock interviews", "duration": "Week 17-18"},
-                    {"milestone": "Company research", "duration": "Week 19"},
-                    {"milestone": "Final refinement", "duration": "Week 20-24"}
+                "title": "Interview Preparation & Polish",
+                "duration": f"{timeline} - Phase 3",
+                "goals": [
+                    "Master behavioral interview techniques",
+                    "Practice mock technical interviews",
+                    "Polish resume and online presence"
                 ],
-                "resources": ["Placementor.ai", "Pramp", "Interview questions"],
-                "skills": ["Communication", "Interview techniques", "Resume optimization"]
+                "resources": [
+                    {"title": "Placementor.ai Mock Interviews", "url": "https://placementor.ai"},
+                    {"title": "Pramp", "url": "https://www.pramp.com"},
+                    {"title": "Interview Prep Guides", "url": "https://www.exponent.com"}
+                ],
+                "milestones": [
+                    "Complete 10+ mock interviews",
+                    "Finalize resume",
+                    "Research target companies"
+                ]
             }
         ],
-        "recommendations": [
-            "Focus on consistent practice rather than rushing through topics",
+        "tips": [
+            "Consistency is key - practice daily, even if just 30 minutes",
             "Build projects that solve real problems",
-            "Join communities and network with peers",
-            "Take regular mock interviews to build confidence"
+            "Document your learning in a blog or GitHub",
+            "Network with peers and join development communities",
+            "Focus on understanding concepts, not just memorizing"
         ]
     }
