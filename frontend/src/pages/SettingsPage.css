@@ -12,7 +12,7 @@
 /* ─── Profile Card (Left) ─── */
 .profile-summary-card {
   background: #fff;
-  border-radius: 22px;
+  border-radius: 21px;
   padding: 30px;
   height: fit-content;
   box-shadow: 0 4px 24px rgba(160,90,40,.09);
