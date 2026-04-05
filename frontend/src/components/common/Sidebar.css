@@ -1,0 +1,139 @@
+/* Sidebar.css */
+
+.sidebar {
+  width: 260px;
+  height: calc(100vh - var(--nav-h, 58px));
+  background: #fdfaf7;
+  border-right: 1.5px solid #e8ddd4;
+  display: flex;
+  flex-direction: column;
+  padding: 20px 14px 20px;
+  box-shadow: 4px 0 24px rgba(180,140,100,0.07);
+  position: sticky;
+  top: var(--nav-h, 58px);
+  overflow-y: auto;
+}
+
+/* subtle warm grain texture */
+.sidebar::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
+
+.sidebar > * { position: relative; z-index: 1; }
+
+/* ── Section label ── */
+.section-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: #b8a898;
+  text-transform: uppercase;
+  padding: 0 10px;
+  margin-bottom: 8px;
+  margin-top: 14px;
+}
+.section-label:first-child { margin-top: 0; }
+
+/* ── Nav list ── */
+.sidebar-nav { list-style: none; flex: 1; display: flex; flex-direction: column; gap: 2px; }
+
+.s-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  text-decoration: none;
+  color: #7a6a5a;
+  font-size: 14.5px;
+  font-weight: 500;
+  transition: background 0.18s ease, color 0.18s ease, transform 0.15s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.s-item:hover {
+  background: #f5ede4;
+  color: #c2673a;
+  transform: translateX(2px);
+}
+
+.s-item.active {
+  background: #fdeee4;
+  color: #c2673a;
+  font-weight: 600;
+}
+
+.s-item.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 20%;
+  height: 60%;
+  width: 3.5px;
+  background: #c2673a;
+  border-radius: 0 3px 3px 0;
+}
+
+/* ── Icons ── */
+.s-icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.s-icon svg {
+  width: 18px;
+  height: 18px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: stroke 0.18s;
+}
+
+/* Dashboard icon uses fill-based grid */
+.icon-dashboard svg {
+  fill: currentColor;
+  stroke: none;
+}
+
+/* ── Divider ── */
+.divider {
+  height: 1.2px;
+  background: linear-gradient(90deg, transparent, #e5d8cc, transparent);
+  margin: 12px 0;
+  border-radius: 2px;
+}
+
+/* ── Spacer ── */
+.spacer { flex: 1; }
+
+/* ── Hover ripple micro-interaction ── */
+.s-item::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 10px;
+  background: radial-gradient(circle at var(--x, 50%) var(--y, 50%), rgba(194,103,58,0.12), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+}
+.s-item:hover::after { opacity: 1; }
+
+.sidebar-bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}

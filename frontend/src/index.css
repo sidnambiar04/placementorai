@@ -1,0 +1,49 @@
+:root {
+  --orange: #D95F00;
+  --orange-soft: #FFF4EC;
+  --bg: #FAF0E8;
+  --dark: #1A1108;
+  --muted: #8C7B6E;
+  --white: #FFFFFF;
+  --border: #EFD9C5;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--dark);
+  min-height: 100vh;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+button {
+  font-family: inherit;
+}
+
+/* Global Layout Utilities */
+.dashboard-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.shell {
+  display: flex;
+  flex: 1;
+}
+
+/* Main content area */
+.main {
+  flex: 1;
+  padding: 28px 32px;
+}

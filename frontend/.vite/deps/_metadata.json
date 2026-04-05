@@ -1,0 +1,64 @@
+{
+  "hash": "a4d4350c",
+  "configHash": "0c7b7c86",
+  "lockfileHash": "91e68a40",
+  "browserHash": "5f88e26d",
+  "optimized": {
+    "firebase/app": {
+      "src": "../../node_modules/firebase/app/dist/esm/index.esm.js",
+      "file": "firebase_app.js",
+      "fileHash": "f64d5815",
+      "needsInterop": false
+    },
+    "firebase/auth": {
+      "src": "../../node_modules/firebase/auth/dist/esm/index.esm.js",
+      "file": "firebase_auth.js",
+      "fileHash": "403c8743",
+      "needsInterop": false
+    },
+    "firebase/firestore": {
+      "src": "../../node_modules/firebase/firestore/dist/esm/index.esm.js",
+      "file": "firebase_firestore.js",
+      "fileHash": "28d18029",
+      "needsInterop": false
+    },
+    "react-dom/client": {
+      "src": "../../node_modules/react-dom/client.js",
+      "file": "react-dom_client.js",
+      "fileHash": "9c172e5d",
+      "needsInterop": true
+    },
+    "react-router-dom": {
+      "src": "../../node_modules/react-router-dom/dist/index.js",
+      "file": "react-router-dom.js",
+      "fileHash": "dd8326e0",
+      "needsInterop": false
+    },
+    "react": {
+      "src": "../../node_modules/react/index.js",
+      "file": "react.js",
+      "fileHash": "49f6a313",
+      "needsInterop": true
+    },
+    "react/jsx-dev-runtime": {
+      "src": "../../node_modules/react/jsx-dev-runtime.js",
+      "file": "react_jsx-dev-runtime.js",
+      "fileHash": "f07eaff8",
+      "needsInterop": true
+    }
+  },
+  "chunks": {
+    "index.esm2017-B_r7p6vl": {
+      "file": "index.esm2017-B_r7p6vl.js",
+      "isDynamicEntry": false
+    },
+    "react-DV3nHG90": {
+      "file": "react-DV3nHG90.js",
+      "isDynamicEntry": false
+    },
+    "react-dom-CaqrMbpA": {
+      "file": "react-dom-CaqrMbpA.js",
+      "isDynamicEntry": false
+    }
+  }
+}

@@ -1,0 +1,118 @@
+﻿
+> placementor-ai-frontend@1.0.0 build
+> vite build
+
+[36mvite v5.4.21 [32mbuilding for production...[36m[39m
+transforming...
+[32mΓ£ô[39m 75 modules transformed.
+node.exe : [31mx[39m 
+Build failed in 1.07s
+At C:\Program 
+Files\nodejs\npm.ps1:29 
+char:3
++   & $NODE_EXE 
+$NPM_CLI_JS $args
++   ~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~
+    + CategoryInfo        
+      : NotSpecified: (  
+  [31mx[39m Build fail   
+ ed in 1.07s:String) [    
+], RemoteException
+    + FullyQualifiedError 
+   Id : NativeCommandErr  
+  or
+ 
+[31merror during build:
+[31msrc/pages/ResumeAudit
+Page.jsx (6:9): 
+"analyzeResume" is not 
+exported by "src/services/
+resumeService.js", 
+imported by "src/pages/Res
+umeAuditPage.jsx".[31m
+file: 
+[36mC:/Users/Sidharth Nam
+biar/Desktop/Placementor.a
+i/frontend/src/pages/Resum
+eAuditPage.jsx:6:9[31m
+[33m
+4: import { getAuth } 
+from 'firebase/auth';
+5: import { getFirestore, 
+doc, getDoc } from 
+'firebase/firestore';
+6: import { analyzeResume 
+} from '../services/resume
+Service';
+            ^
+7: import 
+'./ResumeAuditPage.css';
+[31m
+    at getRollupError (fil
+e:///C:/Users/Sidharth%20N
+ambiar/Desktop/Placementor
+.ai/frontend/node_modules/
+rollup/dist/es/shared/pars
+eAst.js:406:41)
+    at error (file:///C:/U
+sers/Sidharth%20Nambiar/De
+sktop/Placementor.ai/front
+end/node_modules/rollup/di
+st/es/shared/parseAst.js:4
+02:42)
+    at Module.error (file:
+///C:/Users/Sidharth%20Nam
+biar/Desktop/Placementor.a
+i/frontend/node_modules/ro
+llup/dist/es/shared/node-e
+ntry.js:17380:16)
+    at 
+Module.traceVariable (file
+:///C:/Users/Sidharth%20Na
+mbiar/Desktop/Placementor.
+ai/frontend/node_modules/r
+ollup/dist/es/shared/node-
+entry.js:17813:29)
+    at 
+ModuleScope.findVariable (
+file:///C:/Users/Sidharth%
+20Nambiar/Desktop/Placemen
+tor.ai/frontend/node_modul
+es/rollup/dist/es/shared/n
+ode-entry.js:15403:39)
+    at FunctionScope.findV
+ariable (file:///C:/Users/
+Sidharth%20Nambiar/Desktop
+/Placementor.ai/frontend/n
+ode_modules/rollup/dist/es
+/shared/node-entry.js:5676
+:38)
+    at FunctionBodyScope.f
+indVariable (file:///C:/Us
+ers/Sidharth%20Nambiar/Des
+ktop/Placementor.ai/fronte
+nd/node_modules/rollup/dis
+t/es/shared/node-entry.js:
+5676:38)
+    at ReturnValueScope.fi
+ndVariable (file:///C:/Use
+rs/Sidharth%20Nambiar/Desk
+top/Placementor.ai/fronten
+d/node_modules/rollup/dist
+/es/shared/node-entry.js:5
+676:38)
+    at FunctionBodyScope.f
+indVariable (file:///C:/Us
+ers/Sidharth%20Nambiar/Des
+ktop/Placementor.ai/fronte
+nd/node_modules/rollup/dis
+t/es/shared/node-entry.js:
+5676:38)
+    at 
+BlockScope.findVariable (f
+ile:///C:/Users/Sidharth%2
+0Nambiar/Desktop/Placement
+or.ai/frontend/node_module
+s/rollup/dist/es/shared/no
+de-entry.js:5676:38)[39m

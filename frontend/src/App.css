@@ -1,0 +1,10 @@
+/* App Global Overrides */
+.dashboard-layout {
+  display: flex;
+  flex-direction: column;
+}
+
+.shell {
+  display: flex;
+  min-height: calc(100vh - 58px);
+}
