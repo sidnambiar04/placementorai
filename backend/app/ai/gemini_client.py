@@ -7,7 +7,7 @@ from google import genai
 from app.config import settings
 
 client = genai.Client(api_key=settings.GEMINI_API_KEY)
-MODEL = "gemini-flash-latest"
+MODEL = "gemini-2.0-flash"
 
 SAFETY_SETTINGS = [
     {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE"},
