@@ -264,11 +264,7 @@ export default function CareerRoadmapPage() {
                     <span><strong>Saved:</strong> {formatDate(activeRoadmap.created_at)}</span>
                   </div>
 
-                  {activeRoadmap.roadmap_json?.is_mock && (
-                    <div style={{ background: '#fff8e1', border: '1px solid #ffe082', borderRadius: '8px', padding: '10px 14px', fontSize: '13px', color: '#856404', marginBottom: '14px' }}>
-                      ⚠️ Showing a sample roadmap (AI quota reached). Generate again later for a personalized one.
-                    </div>
-                  )}
+                  {/* Warning message removed as requested */}
 
                   {activeRoadmap.roadmap_json?.summary && (
                     <div className="cr-summary">{activeRoadmap.roadmap_json.summary}</div>

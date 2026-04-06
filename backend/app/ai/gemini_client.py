@@ -7,7 +7,7 @@ from google import genai
 from app.config import settings
 
 client = genai.Client(api_key=settings.GEMINI_API_KEY)
-MODEL = "gemini-2.0-flash"
+MODEL = "gemini-1.5-flash"
 
 SAFETY_SETTINGS = [
     {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE"},
@@ -345,24 +345,16 @@ async def generate_career_roadmap(
         weak_areas=weak_areas,
     )
 
-    try:
-        response = client.models.generate_content(
-            model=MODEL,
-            contents=prompt,
-            config={
-                "response_mime_type": "application/json",
-                "safety_settings": SAFETY_SETTINGS,
-            }
-        )
-        raw = _extract_json(response.text)
-        parsed = json.loads(raw)
-        if not isinstance(parsed, dict):
-            raise ValueError("Expected a JSON object for career roadmap")
-        return parsed
-
-    except Exception as e:
-        err_str = str(e)
-        if _is_quota_error(err_str):
-            print("FALLBACK: Using mock roadmap due to quota limit.")
-            return get_mock_career_roadmap()
-        raise
+    response = client.models.generate_content(
+        model=MODEL,
+        contents=prompt,
+        config={
+            "response_mime_type": "application/json",
+            "safety_settings": SAFETY_SETTINGS,
+        }
+    )
+    raw = _extract_json(response.text)
+    parsed = json.loads(raw)
+    if not isinstance(parsed, dict):
+        raise ValueError("Expected a JSON object for career roadmap")
+    return parsed

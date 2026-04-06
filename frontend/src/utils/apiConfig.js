@@ -6,9 +6,9 @@ export const API_ENDPOINTS = {
   RECOMMEND_COMPANIES: `${API_BASE_URL}/api/recommend-companies`,
   RESUME_ANALYZE: `${API_BASE_URL}/api/v1/resume/analyze`,
   RESUME_OPTIMIZE: `${API_BASE_URL}/api/v1/resume/optimize`,
-  MOCK_INTERVIEW_GENERATE: `${API_BASE_URL}/api/v1/mock-interview/generate`,
-  MOCK_INTERVIEW_SUBMIT: `${API_BASE_URL}/api/v1/mock-interview/evaluate`,
-  CAREER_ROADMAP_GENERATE: `${API_BASE_URL}/api/v1/roadmap/generate`,  // ← renamed
+  INTERVIEW_GENERATE: `${API_BASE_URL}/api/v1/interview/generate-questions`,
+  INTERVIEW_SUBMIT: `${API_BASE_URL}/api/v1/interview/evaluate-answers`,
+  CAREER_ROADMAP_GENERATE: `${API_BASE_URL}/api/v1/roadmap/generate`,
   AUTH_LOGIN: `${API_BASE_URL}/api/v1/auth/login`,
   HEALTH: `${API_BASE_URL}/health`,
 };
