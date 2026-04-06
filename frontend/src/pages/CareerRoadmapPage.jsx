@@ -6,16 +6,8 @@ import {
 } from 'firebase/firestore';
 import Navbar from '../components/common/Navbar';
 import Sidebar from '../components/common/Sidebar';
-import { API_ENDPOINTS } from '../utils/apiConfig';
+import { roadmapService } from '../services/roadmapService';
 import './CareerRoadmapPage.css';
-
-const ROLE_OPTIONS = [
-  'Computer Science Student',
-  'Electronics Student',
-  'Mechanical Student',
-  'Working Professional',
-  'Other',
-];
 
 function formatDate(value) {
   if (!value) return '-';
@@ -38,8 +30,7 @@ export default function CareerRoadmapPage() {
   const [expanded, setExpanded] = useState({});
 
   const [form, setForm] = useState({
-    currentRoleSelect: 'Computer Science Student',
-    currentRoleCustom: '',
+    currentRole: '',
     targetRole: '',
     skills: '',
     timeline: '6 months',
@@ -58,6 +49,7 @@ export default function CareerRoadmapPage() {
           setUserData(data);
           setForm(prev => ({
             ...prev,
+            currentRole: data.role || '',
             targetRole: data.dreamRole ? `${data.dreamRole} at a product company` : '',
           }));
         }
@@ -91,11 +83,7 @@ export default function CareerRoadmapPage() {
     const user = auth.currentUser;
     if (!user) return;
 
-    const currentRole = form.currentRoleSelect === 'Other'
-      ? form.currentRoleCustom.trim()
-      : form.currentRoleSelect;
-
-    if (!currentRole || !form.targetRole.trim() || !form.skills.trim() || !form.timeline.trim()) {
+    if (!form.currentRole.trim() || !form.targetRole.trim() || !form.skills.trim() || !form.timeline.trim()) {
       setError('Please fill in all required fields.');
       return;
     }
@@ -104,24 +92,14 @@ export default function CareerRoadmapPage() {
     setGenerating(true);
 
     try {
-      const res = await fetch(API_ENDPOINTS.CAREER_ROADMAP_GENERATE, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          currentRole,
-          targetRole: form.targetRole.trim(),
-          skills: form.skills.trim(),
-          timeline: form.timeline.trim(),
-          weakAreas: form.weakAreas.trim(),
-        }),
+      const data = await roadmapService.generateRoadmap({
+        currentRole: form.currentRole.trim(),
+        targetRole: form.targetRole.trim(),
+        skills: form.skills.trim(),
+        timeline: form.timeline.trim(),
+        weakAreas: form.weakAreas.trim(),
       });
 
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err.detail || 'Failed to generate roadmap.');
-      }
-
-      const data = await res.json();
       const roadmap = data.roadmap || {};
 
       // Save to Firestore
@@ -130,7 +108,7 @@ export default function CareerRoadmapPage() {
         id: ref.id,
         user_id: user.uid,
         target_role: form.targetRole.trim(),
-        current_role: currentRole,
+        current_role: form.currentRole.trim(),
         skills: form.skills.trim(),
         timeline: form.timeline.trim(),
         roadmap_json: roadmap,
@@ -202,19 +180,13 @@ export default function CareerRoadmapPage() {
             <section className="cr-form-card">
               <h2>Generate Roadmap</h2>
 
-              <label>Current Role / Domain</label>
-              <select value={form.currentRoleSelect} onChange={e => setForm(p => ({ ...p, currentRoleSelect: e.target.value }))}>
-                {ROLE_OPTIONS.map(o => <option key={o} value={o}>{o}</option>)}
-              </select>
-
-              {form.currentRoleSelect === 'Other' && (
-                <input
-                  type="text"
-                  placeholder="Enter your current role"
-                  value={form.currentRoleCustom}
-                  onChange={e => setForm(p => ({ ...p, currentRoleCustom: e.target.value }))}
-                />
-              )}
+              <label>Current Role / Domain <span style={{ color: '#f15a22' }}>*</span></label>
+              <input
+                type="text"
+                value={form.currentRole}
+                onChange={e => setForm(p => ({ ...p, currentRole: e.target.value }))}
+                placeholder="e.g. Computer Science Student"
+              />
 
               <label>Target Role <span style={{ color: '#f15a22' }}>*</span></label>
               <input
@@ -233,12 +205,14 @@ export default function CareerRoadmapPage() {
               />
 
               <label>Timeline Goal <span style={{ color: '#f15a22' }}>*</span></label>
-              <input
-                type="text"
+              <select
                 value={form.timeline}
                 onChange={e => setForm(p => ({ ...p, timeline: e.target.value }))}
-                placeholder="e.g. 6 months"
-              />
+              >
+                <option value="3 months">3 months</option>
+                <option value="6 months">6 months</option>
+                <option value="1 year">1 year</option>
+              </select>
 
               <label>Weak Areas / Focus <span style={{ color: '#8e7f78', fontSize: '11px' }}>(Optional)</span></label>
               <textarea
