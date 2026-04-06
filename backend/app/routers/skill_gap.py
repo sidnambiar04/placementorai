@@ -5,7 +5,7 @@ import json
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from typing import Optional, Any
-from app.ai.gemini_client import client, MODEL, SAFETY_SETTINGS, _extract_json
+from app.ai.gemini_client import call_gemini, _extract_json, get_cached_result, set_cached_result
 from app.ai.prompts.skill_gap_prompt import build_skill_gap_prompt
 
 router = APIRouter()
@@ -23,6 +23,18 @@ class SkillGapRequest(BaseModel):
 @router.post("/analyze")
 async def analyze_skill_gap(req: SkillGapRequest):
     try:
+        cache_payload = {
+            "name": req.name,
+            "dreamRole": req.dreamRole,
+            "experienceLevel": req.experienceLevel,
+            "pastExperience": req.pastExperience,
+            "knownSkills": req.knownSkills,
+            "previousAnalysis": req.previousAnalysis,
+        }
+        cached = get_cached_result("skill_gap", cache_payload)
+        if cached is not None:
+            return {"report": cached, "is_cached": True}
+
         prompt = build_skill_gap_prompt(
             name=req.name,
             dream_role=req.dreamRole,
@@ -32,14 +44,7 @@ async def analyze_skill_gap(req: SkillGapRequest):
             previous_analysis=req.previousAnalysis,
         )
 
-        response = client.models.generate_content(
-            model=MODEL,
-            contents=prompt,
-            config={
-                "response_mime_type": "application/json",
-                "safety_settings": SAFETY_SETTINGS,
-            }
-        )
+        response = call_gemini(prompt, feature="skill_gap")
 
         raw = response.text
         print(f"DEBUG RAW SKILL GAP (first 300): {raw[:300]}")
@@ -50,6 +55,7 @@ async def analyze_skill_gap(req: SkillGapRequest):
         if not isinstance(report, dict):
             raise ValueError("Expected a JSON object from Gemini")
 
+        set_cached_result("skill_gap", cache_payload, report, ttl_seconds=43200)
         return {"report": report}
 
     except Exception as e:

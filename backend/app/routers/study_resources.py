@@ -35,7 +35,8 @@ async def generate_resources(body: GenerateResourcesRequest):
         }
     except Exception as e:
         print(f"DEBUG ERROR STUDY RESOURCES: {e}")
-        if "429" in str(e) or "RESOURCE_EXHAUSTED" in str(e):
+        err_str = str(e).upper()
+        if "429" in err_str or "RESOURCE_EXHAUSTED" in err_str or "QUOTA" in err_str:
             print("FALLBACK: Using mock data for study resources due to quota limit.")
             return {
                 "topics": get_mock_study_resources(body.role, body.level, body.topic),

@@ -7,7 +7,7 @@ import re
 from fastapi import APIRouter, HTTPException, UploadFile, File, Form
 from fastapi.responses import StreamingResponse
 from typing import Optional
-from app.ai.gemini_client import client, MODEL, SAFETY_SETTINGS, _extract_json
+from app.ai.gemini_client import call_gemini, _extract_json
 from app.ai.prompts.resume_prompt import build_resume_analysis_prompt, build_resume_optimize_prompt
 
 router = APIRouter()
@@ -69,16 +69,12 @@ async def _analyze_with_gemini(file_bytes: bytes, filename: str, content_type: s
         jd_section = f"\n\nJob Description: {job_description}" if job_description.strip() else ""
         prompt_text = build_resume_analysis_prompt("[See image above]", target_role, job_description)
         
-        response = client.models.generate_content(
-            model=MODEL,
-            contents=[
+        response = call_gemini(
+            [
                 genai_types.Part.from_bytes(data=file_bytes, mime_type=img_mime),
                 genai_types.Part.from_text(text=prompt_text),
             ],
-            config={
-                "response_mime_type": "application/json",
-                "safety_settings": SAFETY_SETTINGS,
-            }
+            feature="resume_analyze",
         )
     else:
         resume_text = _extract_text_from_file(file_bytes, filename, content_type)
@@ -86,14 +82,7 @@ async def _analyze_with_gemini(file_bytes: bytes, filename: str, content_type: s
             raise ValueError("Could not extract text from the uploaded file. Please upload a PDF, DOCX, image, or text file.")
         
         prompt = build_resume_analysis_prompt(resume_text, target_role, job_description)
-        response = client.models.generate_content(
-            model=MODEL,
-            contents=prompt,
-            config={
-                "response_mime_type": "application/json",
-                "safety_settings": SAFETY_SETTINGS,
-            }
-        )
+        response = call_gemini(prompt, feature="resume_analyze")
 
     raw = response.text
     print(f"DEBUG RAW ANALYSIS (first 400): {raw[:400]}")
@@ -205,10 +194,10 @@ async def optimize_resume(
         analysis_dict = json.loads(analysis)
         prompt = build_resume_optimize_prompt(resume_text, target_role, analysis_dict)
 
-        response = client.models.generate_content(
-            model=MODEL,
-            contents=prompt,
-            config={"safety_settings": SAFETY_SETTINGS}
+        response = call_gemini(
+            prompt,
+            feature="resume_optimize",
+            response_mime_type=None,
         )
 
         optimized_text = response.text
@@ -250,4 +239,10 @@ async def optimize_resume(
 
     except Exception as e:
         print(f"ERROR optimize_resume: {e}")
+        err_str = str(e).upper()
+        if "429" in err_str or "RESOURCE_EXHAUSTED" in err_str or "QUOTA" in err_str:
+            raise HTTPException(
+                status_code=503,
+                detail="AI optimization is temporarily rate-limited. Please retry after a few minutes.",
+            )
         raise HTTPException(status_code=500, detail=f"Optimization failed: {str(e)}")

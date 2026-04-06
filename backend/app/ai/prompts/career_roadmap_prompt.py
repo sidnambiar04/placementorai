@@ -39,7 +39,8 @@ Return ONLY JSON in this exact schema (no markdown):
 }}
 
 Requirements:
-- 4 to 6 phases total.
+- 3 to 4 phases total.
 - Each phase must be practical and sequenced for the given timeline.
-- Resources should be realistic and useful links.
+- Include at most 1 resource link per phase.
+- Keep summary concise (max 2 sentences).
 """

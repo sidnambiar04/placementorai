@@ -5,7 +5,7 @@ import json
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from typing import List, Optional, Any
-from app.ai.gemini_client import client, MODEL, SAFETY_SETTINGS, _extract_json
+from app.ai.gemini_client import call_gemini, _extract_json, get_cached_result, set_cached_result
 from app.ai.prompts.skill_gap_prompt import build_company_recommendations_prompt
 
 router = APIRouter()
@@ -21,6 +21,16 @@ class RecommendRequest(BaseModel):
 @router.post("/recommend-companies")
 async def recommend_companies(req: RecommendRequest):
     try:
+        cache_payload = {
+            "role": req.role,
+            "skills": req.skills,
+            "experience": req.experience,
+            "resumeContext": req.resumeContext,
+        }
+        cached = get_cached_result("recommendations", cache_payload)
+        if cached is not None:
+            return cached
+
         prompt = build_company_recommendations_prompt(
             role=req.role,
             skills=req.skills,
@@ -28,14 +38,7 @@ async def recommend_companies(req: RecommendRequest):
             resume_context=req.resumeContext,
         )
 
-        response = client.models.generate_content(
-            model=MODEL,
-            contents=prompt,
-            config={
-                "response_mime_type": "application/json",
-                "safety_settings": SAFETY_SETTINGS,
-            }
-        )
+        response = call_gemini(prompt, feature="recommendations")
 
         raw = response.text
         print(f"DEBUG RAW COMPANIES (first 300): {raw[:300]}")
@@ -46,11 +49,13 @@ async def recommend_companies(req: RecommendRequest):
         if not isinstance(companies, list):
             raise ValueError("Expected a JSON array of companies")
 
+        set_cached_result("recommendations", cache_payload, companies, ttl_seconds=43200)
         return companies
 
     except Exception as e:
         print(f"ERROR recommend_companies: {e}")
-        if "429" in str(e) or "RESOURCE_EXHAUSTED" in str(e):
+        err_str = str(e).upper()
+        if "429" in err_str or "RESOURCE_EXHAUSTED" in err_str or "QUOTA" in err_str:
             print("FALLBACK: Using mock data for company recommendations due to quota limit.")
             return get_mock_company_recommendations(req.role)
         raise HTTPException(status_code=500, detail=str(e))
