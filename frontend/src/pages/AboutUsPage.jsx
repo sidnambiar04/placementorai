@@ -4,7 +4,7 @@ import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import logoIcon from '../assets/icons/logowithout_bg.png';
 import './AboutUsPage.css';
 
-const ABOUT_VIDEO_EMBED = 'https://www.youtube.com/embed/dQw4w9WgXcQ';
+const ABOUT_VIDEO_EMBED = 'https://www.youtube.com/embed/6dhxOChyGSg';
 
 export default function AboutUsPage() {
   const [user, setUser] = React.useState(null);
