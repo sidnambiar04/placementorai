@@ -84,6 +84,7 @@ End-to-end placement preparation workflow in one platform
 <img width="1919" height="954" alt="image" src="https://github.com/user-attachments/assets/3150676e-7e34-4d9b-af94-e568cc35be08" />
 
 Contributions done by team-mates in Placementor AI:
+
 Sanskar Mishra - Worked on Landing Page and its components
 Krupa More - Worked on AI feature of Company Recommendations
 Noel Tony - Worked on User Onboarding page and its extensive data
