@@ -732,11 +732,13 @@
   margin: 0 auto 22px;
   max-width: 1200px;
   display: grid;
-  grid-template-columns: minmax(280px, 1fr);
+  grid-template-columns: minmax(280px, 2fr) minmax(260px, 1fr);
+  align-items: stretch;
   gap: 16px;
 }
 
 .landing-footer-top h3 {
+  grid-column: 1 / -1;
   color: #8a684d;
   letter-spacing: 0.12em;
   font-size: 0.78rem;
@@ -755,7 +757,8 @@
   background: linear-gradient(145deg, #fffdfa, #fff6ef);
   border-radius: 24px;
   padding: 26px 26px;
-  max-width: 720px;
+  max-width: 100%;
+  height: 100%;
   box-shadow: 0 16px 34px rgba(168, 101, 52, 0.1);
   position: relative;
   overflow: hidden;
@@ -822,6 +825,58 @@
 .landing-footer-dev-card a:hover {
   transform: translateY(-1px);
   box-shadow: 0 14px 28px rgba(187, 77, 0, 0.35);
+}
+
+.landing-footer-associates-card {
+  border: 1px solid #ead5c3;
+  background: linear-gradient(145deg, #fff9f4, #fff3e8);
+  border-radius: 24px;
+  padding: 24px;
+  height: 100%;
+  box-shadow: 0 16px 34px rgba(168, 101, 52, 0.09);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 14px;
+}
+
+.landing-footer-associates-card p {
+  color: #8c6f58;
+  font-size: 0.9rem;
+  line-height: 1.65;
+  margin: 0;
+}
+
+.landing-footer-associates-card h4 {
+  color: #1a1108;
+  font-size: clamp(1.05rem, 1.6vw, 1.25rem);
+  line-height: 1.35;
+  margin: 0;
+  font-weight: 800;
+}
+
+.landing-footer-associates-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  width: fit-content;
+  text-decoration: none;
+  color: #a54400;
+  background: #fff;
+  border: 1px solid #efcfb2;
+  border-radius: 999px;
+  padding: 10px 15px;
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.landing-footer-associates-btn:hover {
+  transform: translateY(-1px);
+  border-color: #dfb389;
+  box-shadow: 0 10px 20px rgba(177, 75, 0, 0.18);
 }
 
 .landing-footer-bottom {
@@ -897,6 +952,10 @@
   .landing-hero-title {
     font-size: 2.8rem;
   }
+
+  .landing-footer-top {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 600px) {
@@ -944,6 +1003,20 @@
   .landing-footer-dev-card a {
     font-size: 0.75rem;
     padding: 10px 13px;
+  }
+
+  .landing-footer-associates-card {
+    padding: 18px 16px;
+    border-radius: 18px;
+  }
+
+  .landing-footer-associates-card p {
+    font-size: 0.86rem;
+  }
+
+  .landing-footer-associates-btn {
+    font-size: 0.7rem;
+    padding: 9px 12px;
   }
 
   .landing-footer-links {

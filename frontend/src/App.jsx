@@ -15,6 +15,7 @@ import SuccessStories from './pages/SuccessStories';
 import PartnersPage from './pages/PartnersPage';
 import InterviewPage from './pages/InterviewPage';
 import CareerRoadmapPage from './pages/CareerRoadmapPage';
+import ContributorsPage from './pages/ContributorsPage';
 import './App.css';
 
 function App() {
@@ -39,6 +40,7 @@ function App() {
         <Route path="/interview" element={<InterviewPage />} />
         <Route path="/career-roadmap" element={<CareerRoadmapPage />} />
         <Route path="/roadmap" element={<CareerRoadmapPage />} />
+        <Route path="/contributors" element={<ContributorsPage />} />
       </Routes>
     </Router>
   );

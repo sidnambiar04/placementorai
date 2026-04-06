@@ -202,6 +202,14 @@ export default function LandingPage() {
               VISIT WEBSITE <span>→</span>
             </a>
           </div>
+
+          <div className="landing-footer-associates-card reveal">
+            <p>Crafted by the associates and builders behind Placementor.ai.</p>
+            <h4>Meet the team that shaped this project</h4>
+            <Link to="/contributors" className="landing-footer-associates-btn">
+              VIEW CONTRIBUTORS <span>→</span>
+            </Link>
+          </div>
         </div>
 
         <div className="landing-footer-bottom">
