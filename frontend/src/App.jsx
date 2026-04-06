@@ -16,6 +16,7 @@ import PartnersPage from './pages/PartnersPage';
 import InterviewPage from './pages/InterviewPage';
 import CareerRoadmapPage from './pages/CareerRoadmapPage';
 import ContributorsPage from './pages/ContributorsPage';
+import AboutUsPage from './pages/AboutUsPage';
 import './App.css';
 
 function App() {
@@ -41,6 +42,7 @@ function App() {
         <Route path="/career-roadmap" element={<CareerRoadmapPage />} />
         <Route path="/roadmap" element={<CareerRoadmapPage />} />
         <Route path="/contributors" element={<ContributorsPage />} />
+        <Route path="/about-us" element={<AboutUsPage />} />
       </Routes>
     </Router>
   );

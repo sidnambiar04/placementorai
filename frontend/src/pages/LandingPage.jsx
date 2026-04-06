@@ -66,7 +66,7 @@ export default function LandingPage() {
           <Link to="/" className="landing-nav-link active">Features</Link>
           <Link to="/success-stories" className="landing-nav-link">Success Stories</Link>
           <Link to="/partners" className="landing-nav-link">Companies</Link>
-          <Link to="/" className="landing-nav-link">Resources</Link>
+          <Link to="/about-us" className="landing-nav-link">About Us</Link>
         </div>
         {user ? (
           <Link to="/dashboard" className="landing-btn-login">Dashboard</Link>
