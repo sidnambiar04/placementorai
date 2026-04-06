@@ -1,8 +1,8 @@
 """
-Gemini AI client — wraps the Google GenAI SDK for the Placementor backend.
+Gemini AI client with quota resilience and caching.
 """
-import json
 import hashlib
+import json
 import os
 import re
 import time
@@ -10,9 +10,9 @@ from google import genai
 from app.config import settings
 
 client = genai.Client(api_key=settings.GEMINI_API_KEY)
-MODEL = "gemini-flash-latest"
+MODEL = "gemini-1.5-flash"
 
-# Resilience controls (override via environment variables in deployment).
+# Resilience controls (override via deployment env vars).
 AI_CACHE_ENABLED = os.getenv("AI_CACHE_ENABLED", "true").lower() == "true"
 AI_CACHE_TTL_SECONDS = int(os.getenv("AI_CACHE_TTL_SECONDS", "21600"))
 AI_QUOTA_COOLDOWN_SECONDS = int(os.getenv("AI_QUOTA_COOLDOWN_SECONDS", "900"))
@@ -111,26 +111,18 @@ def call_gemini(
 
 
 def _extract_json(text: str):
-    """Pull the first valid JSON array or object out of a Gemini response.
-
-    Uses raw_decode so it stops after the first complete JSON value and
-    ignores any trailing text / markdown that Gemini sometimes appends,
-    which would cause 'Extra data' errors with plain json.loads().
-    """
-    # 1. Strip markdown fences first
+    """Pull the first valid JSON array or object out of a Gemini response."""
     fenced = re.search(r"```(?:json)?\s*([\s\S]*?)```", text)
     if fenced:
         text = fenced.group(1).strip()
 
     decoder = json.JSONDecoder()
 
-    # 2. Find the first [ or { and try raw_decode from there
     for pattern in [r"\{", r"\["]:
         m = re.search(pattern, text)
         if m:
             try:
                 obj, _ = decoder.raw_decode(text, m.start())
-                # If it's a list, look for the first dictionary inside (Gemini fallback)
                 if isinstance(obj, list):
                     for item in obj:
                         if isinstance(item, dict):
@@ -149,7 +141,7 @@ async def generate_interview_questions(
     difficulty: str,
     count: int = 10,
 ) -> list[dict]:
-    """Ask Gemini to produce `count` interview questions."""
+    """Ask Gemini to produce interview questions."""
     from app.ai.prompts.interview_prompt import build_generate_prompt
 
     payload = {
@@ -168,6 +160,7 @@ async def generate_interview_questions(
     parsed = json.loads(raw)
     if not isinstance(parsed, list):
         raise ValueError("Expected a JSON array of questions")
+
     result = parsed[:count]
     set_cached_result("interview_generate", payload, result, ttl_seconds=1800)
     return result
@@ -178,18 +171,15 @@ async def evaluate_interview_answers(
     answers: dict,
     role: str,
 ) -> dict:
-    """Ask Gemini to evaluate a candidate's answers."""
+    """Ask Gemini to evaluate interview answers."""
     from app.ai.prompts.interview_prompt import build_evaluate_prompt
 
     prompt = build_evaluate_prompt(questions, answers, role)
     response = call_gemini(prompt, feature="interview_evaluate")
 
     raw = _extract_json(response.text)
-    print(f"DEBUG RAW EVAL (first 300 chars): {raw[:300]}")
-
     parsed = json.loads(raw)
 
-    # The AI sometimes returns the result wrapped in a list — unwrap it
     if isinstance(parsed, list):
         for item in parsed:
             if isinstance(item, dict) and "overallScore" in item:
@@ -206,7 +196,7 @@ async def evaluate_interview_answers(
 
 
 async def generate_study_resources(role: str, level: str, topic: str = None) -> list[dict]:
-    """Ask Gemini to generate personalized study resources based on role, level, and topic."""
+    """Ask Gemini to generate personalized study resources."""
     from app.ai.prompts.study_prompt import build_study_resources_prompt
 
     payload = {"role": role, "level": level, "topic": topic}
@@ -218,8 +208,6 @@ async def generate_study_resources(role: str, level: str, topic: str = None) -> 
     response = call_gemini(prompt, feature="study_resources")
 
     raw = _extract_json(response.text)
-    print(f"DEBUG RAW STUDY RESOURCES (first 300 chars): {raw[:300]}")
-
     parsed = json.loads(raw)
 
     if not isinstance(parsed, dict) or "topics" not in parsed:
@@ -231,7 +219,7 @@ async def generate_study_resources(role: str, level: str, topic: str = None) -> 
 
 
 async def generate_mock_interview_questions() -> list[dict]:
-    """Generate exactly 10 placement mock interview questions (6 MCQ + 4 text)."""
+    """Generate exactly 10 placement mock interview questions."""
     from app.ai.prompts.mock_interview_prompt import build_mock_interview_generation_prompt
 
     cached = get_cached_result("mock_interview_generate", {"v": 1})
@@ -313,5 +301,6 @@ async def generate_career_roadmap(
     parsed = json.loads(raw)
     if not isinstance(parsed, dict):
         raise ValueError("Expected a JSON object for career roadmap")
+
     set_cached_result("career_roadmap", payload, parsed, ttl_seconds=43200)
     return parsed

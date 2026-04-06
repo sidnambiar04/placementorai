@@ -1,29 +1,13 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import {
-  collection,
-  deleteDoc,
-  doc,
-  getDoc,
-  getDocs,
-  getFirestore,
-  query,
-  serverTimestamp,
-  setDoc,
-  where,
+  collection, deleteDoc, doc, getDoc, getDocs,
+  getFirestore, query, serverTimestamp, setDoc, where,
 } from 'firebase/firestore';
 import Navbar from '../components/common/Navbar';
 import Sidebar from '../components/common/Sidebar';
-import { API_ENDPOINTS } from '../utils/apiConfig';
+import { roadmapService } from '../services/roadmapService';
 import './CareerRoadmapPage.css';
-
-const ROLE_OPTIONS = [
-  'Computer Science Student',
-  'Electronics Student',
-  'Mechanical Student',
-  'Working Professional',
-  'Other',
-];
 
 function formatDate(value) {
   if (!value) return '-';
@@ -32,22 +16,13 @@ function formatDate(value) {
   return String(value);
 }
 
-function getReadableError(err, fallback) {
-  const msg = String(err?.message || '').toLowerCase();
-  if (msg.includes('failed to fetch') || msg.includes('networkerror')) {
-    return 'Cannot connect to backend server at http://localhost:8000. Start backend and try again.';
-  }
-  return err?.message || fallback;
-}
-
 export default function CareerRoadmapPage() {
   const auth = getAuth();
   const db = getFirestore();
 
-  const [userData, setUserData] = useState({ name: 'Candidate', dreamRole: 'Software Engineer' });
+  const [userData, setUserData] = useState(null);
   const [pageLoading, setPageLoading] = useState(true);
-  const [loading, setLoading] = useState(false);
-  const [historyLoading, setHistoryLoading] = useState(false);
+  const [generating, setGenerating] = useState(false);
   const [error, setError] = useState('');
 
   const [roadmaps, setRoadmaps] = useState([]);
@@ -55,152 +30,130 @@ export default function CareerRoadmapPage() {
   const [expanded, setExpanded] = useState({});
 
   const [form, setForm] = useState({
-    currentRoleSelect: 'Computer Science Student',
-    currentRoleCustom: '',
-    targetRole: 'Backend Developer at a product company',
+    currentRole: '',
+    targetRole: '',
     skills: '',
     timeline: '6 months',
     weakAreas: '',
   });
 
+  // ── Load user + saved roadmaps on mount ──
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, async (user) => {
-      if (!user) {
-        setPageLoading(false);
-        return;
-      }
+      if (!user) { setPageLoading(false); return; }
 
       try {
-        const userSnap = await getDoc(doc(db, 'users', user.uid));
-        if (userSnap.exists()) {
-          const data = userSnap.data();
-          setUserData((prev) => ({ ...prev, ...data }));
-          setForm((prev) => ({
+        const snap = await getDoc(doc(db, 'users', user.uid));
+        if (snap.exists()) {
+          const data = snap.data();
+          setUserData(data);
+          setForm(prev => ({
             ...prev,
-            currentRoleSelect: 'Computer Science Student',
-            targetRole: data.dreamRole ? `${data.dreamRole} at a product company` : prev.targetRole,
+            currentRole: data.role || '',
+            targetRole: data.dreamRole ? `${data.dreamRole} at a product company` : '',
           }));
         }
-      } catch (err) {
-        console.error('Failed to fetch user data:', err);
-      }
+      } catch (e) { console.error(e); }
 
-      await loadRoadmaps(user.uid);
+      await loadRoadmaps(user.uid, true);
       setPageLoading(false);
     });
-
     return () => unsub();
-  }, [auth, db]);
+  }, []);
 
-  async function loadRoadmaps(uid) {
-    setHistoryLoading(true);
+  // ── Load from Firestore (no API call) ──
+  async function loadRoadmaps(uid, setActiveOnLoad = false) {
     try {
       const q = query(collection(db, 'career_roadmaps'), where('user_id', '==', uid));
       const snap = await getDocs(q);
-      const rows = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
-      rows.sort((a, b) => {
-        const at = a.created_at?.seconds || 0;
-        const bt = b.created_at?.seconds || 0;
-        return bt - at;
-      });
+      const rows = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      rows.sort((a, b) => (b.created_at?.seconds || 0) - (a.created_at?.seconds || 0));
       setRoadmaps(rows);
-      if (rows.length > 0 && !activeRoadmap) {
+      // Show latest saved roadmap immediately — no API call
+      if (setActiveOnLoad && rows.length > 0) {
         setActiveRoadmap(rows[0]);
       }
-    } catch (err) {
-      console.error('Failed to load roadmaps:', err);
-    } finally {
-      setHistoryLoading(false);
+    } catch (e) {
+      console.error('Failed to load roadmaps:', e);
     }
   }
 
-  const resolvedCurrentRole = useMemo(() => {
-    if (form.currentRoleSelect === 'Other') {
-      return form.currentRoleCustom.trim();
-    }
-    return form.currentRoleSelect;
-  }, [form.currentRoleCustom, form.currentRoleSelect]);
+  // ── Generate new roadmap (only on button click) ──
+  async function handleGenerate() {
+    const user = auth.currentUser;
+    if (!user) return;
 
-  async function handleGenerateRoadmap() {
-    if (!auth.currentUser) return;
-
-    setError('');
-    if (!resolvedCurrentRole || !form.targetRole.trim() || !form.skills.trim() || !form.timeline.trim()) {
-      setError('Please fill current role, target role, skills, and timeline.');
+    if (!form.currentRole.trim() || !form.targetRole.trim() || !form.skills.trim() || !form.timeline.trim()) {
+      setError('Please fill in all required fields.');
       return;
     }
 
-    setLoading(true);
+    setError('');
+    setGenerating(true);
+
     try {
-      const response = await fetch(API_ENDPOINTS.CAREER_ROADMAP_GENERATE, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          currentRole: resolvedCurrentRole,
-          targetRole: form.targetRole.trim(),
-          skills: form.skills.trim(),
-          timeline: form.timeline.trim(),
-          weakAreas: form.weakAreas.trim(),
-        }),
+      const data = await roadmapService.generateRoadmap({
+        currentRole: form.currentRole.trim(),
+        targetRole: form.targetRole.trim(),
+        skills: form.skills.trim(),
+        timeline: form.timeline.trim(),
+        weakAreas: form.weakAreas.trim(),
       });
 
-      if (!response.ok) throw new Error('Failed to generate roadmap. Please try again.');
-      const data = await response.json();
       const roadmap = data.roadmap || {};
 
-      const roadmapRef = doc(collection(db, 'career_roadmaps'));
-      await setDoc(roadmapRef, {
-        id: roadmapRef.id,
-        user_id: auth.currentUser.uid,
+      // Save to Firestore
+      const ref = doc(collection(db, 'career_roadmaps'));
+      const docData = {
+        id: ref.id,
+        user_id: user.uid,
         target_role: form.targetRole.trim(),
-        current_role: resolvedCurrentRole,
+        current_role: form.currentRole.trim(),
         skills: form.skills.trim(),
         timeline: form.timeline.trim(),
         roadmap_json: roadmap,
         created_at: serverTimestamp(),
-      });
+      };
+      await setDoc(ref, docData);
 
-      await loadRoadmaps(auth.currentUser.uid);
-      setActiveRoadmap({
-        id: roadmapRef.id,
-        user_id: auth.currentUser.uid,
-        target_role: form.targetRole.trim(),
-        current_role: resolvedCurrentRole,
-        skills: form.skills.trim(),
-        timeline: form.timeline.trim(),
-        roadmap_json: roadmap,
-      });
+      // Show immediately without waiting for reload
+      setActiveRoadmap({ ...docData, created_at: new Date() });
       setExpanded({});
-    } catch (err) {
-      setError(getReadableError(err, 'Could not generate roadmap.'));
+      await loadRoadmaps(user.uid);
+
+    } catch (e) {
+      setError(e.message || 'Could not generate roadmap. Please try again.');
     } finally {
-      setLoading(false);
+      setGenerating(false);
     }
   }
 
-  async function handleDeleteRoadmap(id) {
-    if (!auth.currentUser) return;
-    if (!window.confirm('Delete this saved roadmap?')) return;
-
+  async function handleDelete(id) {
+    if (!window.confirm('Delete this roadmap?')) return;
     try {
       await deleteDoc(doc(db, 'career_roadmaps', id));
-      await loadRoadmaps(auth.currentUser.uid);
+      const updated = roadmaps.filter(r => r.id !== id);
+      setRoadmaps(updated);
       if (activeRoadmap?.id === id) {
-        setActiveRoadmap(null);
+        setActiveRoadmap(updated[0] || null);
       }
-    } catch (err) {
+    } catch (e) {
       setError('Failed to delete roadmap.');
     }
   }
 
-  function togglePhase(index) {
-    setExpanded((prev) => ({ ...prev, [index]: !prev[index] }));
+  function togglePhase(i) {
+    setExpanded(prev => ({ ...prev, [i]: !prev[i] }));
   }
 
   const phases = activeRoadmap?.roadmap_json?.phases || [];
 
   if (pageLoading) {
-    return <div className="cr-loading-screen">Loading...</div>;
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', fontFamily: 'DM Sans, sans-serif', color: '#8e7f78' }}>
+        Loading your roadmap...
+      </div>
+    );
   }
 
   return (
@@ -212,175 +165,206 @@ export default function CareerRoadmapPage() {
         <main className="cr-main">
           <div className="cr-header">
             <h1>AI Career Roadmap</h1>
-            <p>Build your personalized, phase-wise placement roadmap and save every version for later.</p>
+            <p>Generate a personalized, phase-wise placement roadmap. Your roadmap is saved and loads instantly every visit.</p>
           </div>
 
-          {error && <div className="cr-error">{error}</div>}
+          {error && (
+            <div className="cr-error" style={{ background: '#fde8e8', border: '1px solid #f5c6c6', borderRadius: '10px', padding: '12px 16px', color: '#c0392b', marginBottom: '20px', fontSize: '14px' }}>
+              {error}
+            </div>
+          )}
 
           <div className="cr-layout">
+
+            {/* ── FORM ── */}
             <section className="cr-form-card">
               <h2>Generate Roadmap</h2>
 
-              <label>Current Role / Domain</label>
-              <select
-                value={form.currentRoleSelect}
-                onChange={(e) => setForm((prev) => ({ ...prev, currentRoleSelect: e.target.value }))}
-              >
-                {ROLE_OPTIONS.map((option) => (
-                  <option value={option} key={option}>
-                    {option}
-                  </option>
-                ))}
-              </select>
+              <label>Current Role / Domain <span style={{ color: '#f15a22' }}>*</span></label>
+              <input
+                type="text"
+                value={form.currentRole}
+                onChange={e => setForm(p => ({ ...p, currentRole: e.target.value }))}
+                placeholder="e.g. Computer Science Student"
+              />
 
-              {form.currentRoleSelect === 'Other' && (
-                <input
-                  type="text"
-                  placeholder="Enter your current role"
-                  value={form.currentRoleCustom}
-                  onChange={(e) => setForm((prev) => ({ ...prev, currentRoleCustom: e.target.value }))}
-                />
-              )}
-
-              <label>Target Role</label>
+              <label>Target Role <span style={{ color: '#f15a22' }}>*</span></label>
               <input
                 type="text"
                 value={form.targetRole}
-                onChange={(e) => setForm((prev) => ({ ...prev, targetRole: e.target.value }))}
-                placeholder="Backend Developer at a product company"
+                onChange={e => setForm(p => ({ ...p, targetRole: e.target.value }))}
+                placeholder="e.g. Backend Developer at a product company"
               />
 
-              <label>Current Skills</label>
+              <label>Current Skills <span style={{ color: '#f15a22' }}>*</span></label>
               <textarea
                 rows={3}
                 value={form.skills}
-                onChange={(e) => setForm((prev) => ({ ...prev, skills: e.target.value }))}
-                placeholder="DSA, Python, SQL, REST APIs"
+                onChange={e => setForm(p => ({ ...p, skills: e.target.value }))}
+                placeholder="e.g. DSA, Python, SQL, REST APIs"
               />
 
-              <label>Timeline Goal</label>
-              <input
-                type="text"
+              <label>Timeline Goal <span style={{ color: '#f15a22' }}>*</span></label>
+              <select
                 value={form.timeline}
-                onChange={(e) => setForm((prev) => ({ ...prev, timeline: e.target.value }))}
-                placeholder="6 months"
-              />
+                onChange={e => setForm(p => ({ ...p, timeline: e.target.value }))}
+              >
+                <option value="3 months">3 months</option>
+                <option value="6 months">6 months</option>
+                <option value="1 year">1 year</option>
+              </select>
 
-              <label>Weak Areas / Focus (Optional)</label>
+              <label>Weak Areas / Focus <span style={{ color: '#8e7f78', fontSize: '11px' }}>(Optional)</span></label>
               <textarea
                 rows={3}
                 value={form.weakAreas}
-                onChange={(e) => setForm((prev) => ({ ...prev, weakAreas: e.target.value }))}
-                placeholder="Communication, system design"
+                onChange={e => setForm(p => ({ ...p, weakAreas: e.target.value }))}
+                placeholder="e.g. System design, Communication"
               />
 
-              <button className="cr-primary-btn" onClick={handleGenerateRoadmap} disabled={loading}>
-                {loading ? 'Generating...' : 'Generate Roadmap'}
+              <button
+                className="cr-primary-btn"
+                onClick={handleGenerate}
+                disabled={generating}
+                style={{ opacity: generating ? 0.7 : 1 }}
+              >
+                {generating ? '⏳ Generating...' : '🗺 Generate Roadmap'}
               </button>
+
+              {generating && (
+                <p style={{ fontSize: '12px', color: '#8e7f78', textAlign: 'center', marginTop: '8px' }}>
+                  AI is building your roadmap — this takes ~15 seconds.
+                </p>
+              )}
             </section>
 
+            {/* ── OUTPUT ── */}
             <section className="cr-output-card">
               <h2>Roadmap Output</h2>
-              {!activeRoadmap && <div className="cr-empty">Generate or select a roadmap to view details.</div>}
 
-              {activeRoadmap && (
+              {!activeRoadmap && !generating && (
+                <div className="cr-empty">
+                  <div style={{ fontSize: '40px', marginBottom: '12px' }}>🗺</div>
+                  <p>No roadmap yet. Fill the form and click Generate.</p>
+                </div>
+              )}
+
+              {generating && (
+                <div className="cr-empty">
+                  <div style={{ fontSize: '40px', marginBottom: '12px', animation: 'spin 1s linear infinite', display: 'inline-block' }}>⏳</div>
+                  <p>Building your personalized roadmap...</p>
+                </div>
+              )}
+
+              {activeRoadmap && !generating && (
                 <>
                   <div className="cr-meta">
-                    <span>
-                      <strong>Target:</strong> {activeRoadmap.target_role}
-                    </span>
-                    <span>
-                      <strong>Timeline:</strong> {activeRoadmap.timeline}
-                    </span>
-                    <span>
-                      <strong>Generated:</strong> {formatDate(activeRoadmap.created_at)}
-                    </span>
+                    <span><strong>Target:</strong> {activeRoadmap.target_role}</span>
+                    <span><strong>Timeline:</strong> {activeRoadmap.timeline}</span>
+                    <span><strong>Saved:</strong> {formatDate(activeRoadmap.created_at)}</span>
                   </div>
 
-                  {activeRoadmap.roadmap_json?.summary ? (
+                  {/* Warning message removed as requested */}
+
+                  {activeRoadmap.roadmap_json?.summary && (
                     <div className="cr-summary">{activeRoadmap.roadmap_json.summary}</div>
-                  ) : null}
+                  )}
 
                   <div className="cr-timeline">
-                    {phases.map((phase, index) => (
-                      <div className="cr-phase" key={`${phase.title}-${index}`}>
-                        <button className="cr-phase-head" onClick={() => togglePhase(index)}>
-                          <div className="cr-phase-index">{String(index + 1).padStart(2, '0')}</div>
+                    {phases.length === 0 && (
+                      <p style={{ color: '#8e7f78', fontSize: '14px' }}>No phases found in this roadmap.</p>
+                    )}
+                    {phases.map((phase, i) => (
+                      <div className="cr-phase" key={i}>
+                        <button className="cr-phase-head" onClick={() => togglePhase(i)}>
+                          <div className="cr-phase-index">{String(i + 1).padStart(2, '0')}</div>
                           <div className="cr-phase-info">
                             <h3>{phase.title}</h3>
                             <p>{phase.duration}</p>
                           </div>
-                          <div className="cr-phase-toggle">{expanded[index] ? 'Hide' : 'Show'}</div>
+                          <div className="cr-phase-toggle">{expanded[i] ? '▲ Hide' : '▼ Show'}</div>
                         </button>
 
-                        {expanded[index] && (
+                        {expanded[i] && (
                           <div className="cr-phase-body">
-                            <div>
-                              <h4>Goals</h4>
-                              <ul>
-                                {(phase.goals || []).map((goal, i) => (
-                                  <li key={`goal-${i}`}>{goal}</li>
-                                ))}
-                              </ul>
-                            </div>
-
-                            <div>
-                              <h4>Resources</h4>
-                              <ul>
-                                {(phase.resources || []).map((resource, i) => (
-                                  <li key={`resource-${i}`}>
-                                    {resource?.url ? (
-                                      <a href={resource.url} target="_blank" rel="noreferrer">
-                                        {resource.title || resource.url}
-                                      </a>
-                                    ) : (
-                                      resource?.title || '-'
-                                    )}
-                                  </li>
-                                ))}
-                              </ul>
-                            </div>
-
-                            <div>
-                              <h4>Milestones</h4>
-                              <ul>
-                                {(phase.milestones || []).map((milestone, i) => (
-                                  <li key={`milestone-${i}`}>{milestone}</li>
-                                ))}
-                              </ul>
-                            </div>
+                            {(phase.goals || []).length > 0 && (
+                              <div>
+                                <h4>🎯 Goals</h4>
+                                <ul>{phase.goals.map((g, j) => <li key={j}>{g}</li>)}</ul>
+                              </div>
+                            )}
+                            {(phase.resources || []).length > 0 && (
+                              <div>
+                                <h4>📚 Resources</h4>
+                                <ul>
+                                  {phase.resources.map((r, j) => (
+                                    <li key={j}>
+                                      {r?.url
+                                        ? <a href={r.url} target="_blank" rel="noreferrer">{r.title || r.url}</a>
+                                        : r?.title || String(r)
+                                      }
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
+                            {(phase.milestones || []).length > 0 && (
+                              <div>
+                                <h4>🏁 Milestones</h4>
+                                <ul>{phase.milestones.map((m, j) => <li key={j}>{m}</li>)}</ul>
+                              </div>
+                            )}
                           </div>
                         )}
                       </div>
                     ))}
                   </div>
+
+                  {(activeRoadmap.roadmap_json?.tips || []).length > 0 && (
+                    <div style={{ marginTop: '20px', background: '#fff4ef', borderRadius: '12px', padding: '16px' }}>
+                      <h4 style={{ fontSize: '13px', fontWeight: '700', color: '#f15a22', marginBottom: '10px' }}>💡 Tips</h4>
+                      <ul style={{ paddingLeft: '16px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                        {activeRoadmap.roadmap_json.tips.map((tip, i) => (
+                          <li key={i} style={{ fontSize: '13px', color: '#5a3e30' }}>{tip}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
                 </>
               )}
             </section>
           </div>
 
+          {/* ── HISTORY ── */}
           <section className="cr-history-card">
             <div className="cr-history-head">
-              <h2>My Roadmaps</h2>
-              {historyLoading ? <span>Loading...</span> : null}
+              <h2>My Saved Roadmaps</h2>
+              <span style={{ fontSize: '13px', color: '#8e7f78' }}>{roadmaps.length} saved</span>
             </div>
 
-            {!historyLoading && roadmaps.length === 0 ? <div className="cr-empty">No saved roadmaps yet.</div> : null}
-
-            {roadmaps.length > 0 && (
+            {roadmaps.length === 0 ? (
+              <div className="cr-empty">No saved roadmaps yet. Generate your first one!</div>
+            ) : (
               <div className="cr-history-list">
-                {roadmaps.map((item) => (
-                  <div className="cr-history-item" key={item.id}>
+                {roadmaps.map(item => (
+                  <div
+                    className="cr-history-item"
+                    key={item.id}
+                    style={{ borderLeft: activeRoadmap?.id === item.id ? '3px solid #f15a22' : '3px solid transparent' }}
+                  >
                     <div className="cr-history-item-main">
                       <strong>{item.target_role}</strong>
                       <span>{item.timeline}</span>
                       <span>{formatDate(item.created_at)}</span>
                     </div>
                     <div className="cr-history-actions">
-                      <button className="cr-secondary-btn" onClick={() => setActiveRoadmap(item)}>
+                      <button
+                        className="cr-secondary-btn"
+                        onClick={() => { setActiveRoadmap(item); setExpanded({}); }}
+                      >
                         Open
                       </button>
-                      <button className="cr-danger-btn" onClick={() => handleDeleteRoadmap(item.id)}>
+                      <button className="cr-danger-btn" onClick={() => handleDelete(item.id)}>
                         Delete
                       </button>
                     </div>
@@ -389,6 +373,7 @@ export default function CareerRoadmapPage() {
               </div>
             )}
           </section>
+
         </main>
       </div>
     </div>

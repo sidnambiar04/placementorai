@@ -171,7 +171,7 @@ export default function MockInterviewPage() {
     setError('');
 
     try {
-      const response = await fetch(API_ENDPOINTS.MOCK_INTERVIEW_EVALUATE, {
+      const response = await fetch(API_ENDPOINTS.MOCK_INTERVIEW_SUBMIT, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ questions, answers }),
