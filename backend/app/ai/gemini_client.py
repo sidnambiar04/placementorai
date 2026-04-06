@@ -10,7 +10,7 @@ from google import genai
 from app.config import settings
 
 client = genai.Client(api_key=settings.GEMINI_API_KEY)
-MODEL = "gemini-1.5-flash"
+MODEL = "gemini-2.0-flash"
 
 # Resilience controls (override via deployment env vars).
 AI_CACHE_ENABLED = os.getenv("AI_CACHE_ENABLED", "true").lower() == "true"
