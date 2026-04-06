@@ -24,7 +24,7 @@ const contributors = [
     featured: true,
   },
   {
-    name: 'morekrupa',
+    name: 'More Krupa',
     title: 'Job Opportunities Specialist',
     description: [
       'Designed and developed the job opportunities feature and matching experience.',
@@ -32,7 +32,7 @@ const contributors = [
     ],
   },
   {
-    name: 'AyushNair',
+    name: 'Ayush Nair',
     title: 'Dashboard Designer',
     description: [
       'Built the dashboard page with progress insights, quick actions, and personalized summaries.',
@@ -48,7 +48,7 @@ const contributors = [
     ],
   },
   {
-    name: 'SuyashNair',
+    name: 'Suyash Nair',
     title: 'Companies Page Builder',
     description: [
       'Built the companies page and employer discovery interface.',
@@ -56,7 +56,7 @@ const contributors = [
     ],
   },
   {
-    name: 'RUTUJA NANGARE',
+    name: 'Rutuja Nangare',
     title: 'Profile Page Owner',
     description: [
       'Designed and implemented the profile page with editable career preferences.',
@@ -64,7 +64,7 @@ const contributors = [
     ],
   },
   {
-    name: 'AdityaNair',
+    name: 'Aditya Nair',
     title: 'Settings Page Developer',
     description: [
       'Built the settings page and account configuration controls.',
