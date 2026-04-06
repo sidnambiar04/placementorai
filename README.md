@@ -83,4 +83,18 @@ End-to-end placement preparation workflow in one platform
 <img width="1919" height="969" alt="image" src="https://github.com/user-attachments/assets/bbb09082-dc9d-4c0d-9b63-79f21993d3b3" />
 <img width="1919" height="954" alt="image" src="https://github.com/user-attachments/assets/3150676e-7e34-4d9b-af94-e568cc35be08" />
 
+Contributions done by team-mates in Placementor AI:
+
+Sanskar Mishra - Worked on Landing Page and its components
+Krupa More - Worked on AI feature of Company Recommendations
+Noel Tony - Worked on User Onboarding page and its extensive data
+Aditya Nair - Worked on Settings page providing web-appearance features
+Anand Nair - Worked on Success Stories page displaying blogs and review
+Ayush Nair - Worked on Dashboard page showing performance metrics
+Sreeshant Nair - Worked on UI/UX designing of attractive Landing Page
+Suyash Nair - Worked on Partners page providing details on companies
+Vishnu Nair - Worked on Mock Interview-Evaluation and Roadmap feature
+Sidharth Nambiar - Worked on Resume Evaluation and Skill Gap Analysis
+Rutuja Nangare -  Worked on Profile page providing user information
+
 
