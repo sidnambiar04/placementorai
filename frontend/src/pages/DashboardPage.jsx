@@ -129,7 +129,7 @@ export default function DashboardPage() {
               </span>
             </div>
             <div className="hero-actions">
-              <button className="btn-hero btn-hero-primary" onClick={() => navigate('/resume-audit')}>
+              <button className="btn-hero btn-hero-primary" onClick={() => navigate('/mock-interview')}>
                 <span className="hero-play-icon">
                   <svg viewBox="0 0 10 10"><polygon points="2,1 9,5 2,9"/></svg>
                 </span>
@@ -187,7 +187,7 @@ export default function DashboardPage() {
               <button className="btn-evaluate-mini">✦ Evaluate Now</button>
             </div>
 
-            <div className="empty-card" onClick={() => navigate('/resume-audit')}>
+            <div className="empty-card" onClick={() => navigate('/mock-interview')}>
               <div className="empty-icon">📊</div>
               <div className="empty-title">No interviews attempted yet</div>
               <div className="empty-sub">Your journey is just beginning.<br/>Let's make it legendary.</div>
@@ -260,7 +260,7 @@ export default function DashboardPage() {
               <div className="action-name">Upload Resume</div>
               <div className="action-desc">Get AI-driven feedback on your CV.</div>
             </div>
-            <div className="action-card" onClick={() => navigate('/resume-audit')}>
+            <div className="action-card" onClick={() => navigate('/mock-interview')}>
               <div className="action-icon">🎤</div>
               <div className="action-name">Start Mock Interview</div>
               <div className="action-desc">Practice role-specific questions.</div>
@@ -280,7 +280,7 @@ export default function DashboardPage() {
               <div className="action-name">Study Resources</div>
               <div className="action-desc">Personalized links to master gaps.</div>
             </div>
-            <div className="action-card" onClick={() => navigate('/resources')}>
+            <div className="action-card" onClick={() => navigate('/career-roadmap')}>
               <div className="action-icon">🗺️</div>
               <div className="action-name">Career Roadmap</div>
               <div className="action-desc">See your path to Senior Dev.</div>
