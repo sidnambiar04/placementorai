@@ -142,7 +142,7 @@ npm run dev
 | Sreeshant Nair | UI/UX designing of attractive Landing Page |
 | Suyash Nair | Partners page providing details on companies |
 | Vishnu Nair | Mock Interview-Evaluation and Roadmap feature |
-| Sidharth Nambiar | Resume Evaluation and Skill Gap Analysis |
+| Sidharth Nambiar | Resume Evaluation, Skill Gap Analysis and Resource Recommendation Feature |
 | Rutuja Nangare | Profile page providing user information |
 
 ---
